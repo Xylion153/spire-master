@@ -423,6 +423,9 @@ button:active:not(:disabled){transform:scale(.93)}
 #itap{position:absolute;left:9%;bottom:12%;font:400 clamp(16px,4.4vh,24px) var(--display);color:#fff;letter-spacing:.12em;animation:ibl 1.4s ease-in-out infinite;text-shadow:0 2px 0 var(--ink)}
 @keyframes ibl{50%{opacity:.25}}
 #ico{position:absolute;left:0;right:0;bottom:3%;text-align:center;font:600 11px var(--body);color:rgba(195,181,234,.5)}
+
+html.rotd #rot{display:none!important}
+html.rotd,html.rotd body{overflow:hidden}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -505,6 +508,26 @@ function musicTick(){
     MUS.next+=e; MUS.step++;
   }
 }
+/* ===== forced landscape: in portrait the whole game is rotated 90deg so it always starts landscape ===== */
+let ROT=false;
+(function(){
+  const mq=window.matchMedia('(orientation:portrait) and (max-width:820px)');
+  const dx=Object.getOwnPropertyDescriptor(MouseEvent.prototype,'clientX'), dy=Object.getOwnPropertyDescriptor(MouseEvent.prototype,'clientY');
+  if(dx&&dy&&dx.get&&dy.get){
+    Object.defineProperty(MouseEvent.prototype,'clientX',{configurable:true,get(){ return ROT? dy.get.call(this) : dx.get.call(this); }});
+    Object.defineProperty(MouseEvent.prototype,'clientY',{configurable:true,get(){ return ROT? window.innerWidth-dx.get.call(this) : dy.get.call(this); }});
+  }
+  const gbr=Element.prototype.getBoundingClientRect;
+  Element.prototype.getBoundingClientRect=function(){ const r=gbr.call(this); if(!ROT) return r; const a=document.getElementById('app'); if(!a||!(this===a||a.contains(this))) return r;
+    const vw=window.innerWidth; return new DOMRect(r.top,vw-r.right,r.height,r.width); };
+  const efp=Document.prototype.elementFromPoint; Document.prototype.elementFromPoint=function(x,y){ return ROT? efp.call(this,window.innerWidth-y,x) : efp.call(this,x,y); };
+  const efps=Document.prototype.elementsFromPoint; Document.prototype.elementsFromPoint=function(x,y){ return ROT? efps.call(this,window.innerWidth-y,x) : efps.call(this,x,y); };
+  function apply(){ ROT=mq.matches; const h=document.documentElement; h.classList.toggle('rotd',ROT); const a=document.getElementById('app'); if(!a) return;
+    if(ROT){ const vw=window.innerWidth, vh=window.innerHeight; a.style.cssText+=';top:0;left:0;width:'+vh+'px;height:'+vw+'px;transform-origin:0 0;transform:translateX('+vw+'px) rotate(90deg)'; }
+    else { a.style.transform=''; a.style.transformOrigin=''; a.style.width=''; } }
+  window.__rotApply=apply; apply();
+  window.addEventListener('resize',apply); window.addEventListener('orientationchange',()=>setTimeout(()=>{ apply(); window.dispatchEvent(new Event('resize')); },120));
+})();
 /* ===== Wayward Inn : core rules (no DOM) ===== */
 const rnd=Math.random, ri=(a,b)=>a+Math.floor(rnd()*(b-a+1)), pick=a=>a[Math.floor(rnd()*a.length)];
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
@@ -1507,7 +1530,7 @@ function innAmbience(c,t,tier){
 const cv=$('c'), ctx=cv.getContext('2d'), cv2=$('c2'), ctx2=cv2.getContext('2d'); let W=0,H=0,DPR=Math.min(2,window.devicePixelRatio||1),PIX=1/DPR;
 const APP=$('app'); let VIS=null;
 /* The host app can clip the bottom of the page (its header pushes the frame down). Measure what is actually on screen and fit the game to that. */
-function fitApp(){ const ih=window.innerHeight; let t=0,h=ih; if(VIS&&VIS.h>=160&&VIS.h<ih-6){ t=VIS.t; h=VIS.h; } APP.style.top=t+'px'; APP.style.height=h+'px'; }
+function fitApp(){ if(ROT){ if(window.__rotApply) window.__rotApply(); return; } const ih=window.innerHeight; let t=0,h=ih; if(VIS&&VIS.h>=160&&VIS.h<ih-6){ t=VIS.t; h=VIS.h; } APP.style.top=t+'px'; APP.style.height=h+'px'; }
 function resize(){ fitApp(); W=APP.clientWidth||window.innerWidth; H=APP.clientHeight||window.innerHeight; { const hw=Math.round(Math.max(W*.36,Math.min(W*.5,H*.95))); APP.style.setProperty('--sw',Math.max(300,W-hw)+'px'); } cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); cv2.width=Math.round(W*DPR); cv2.height=Math.round(H*DPR); ctx.imageSmoothingEnabled=true; }
 function setPix(p){}
 window.addEventListener('resize',()=>{ resize(); if(typeof layout==='function') layout(); });
@@ -2249,7 +2272,7 @@ cv.addEventListener('pointercancel',()=>{ clearTimeout(LD.timer); LD.id=null; LD
 /* ---------- drag in the Team tab (slots and bench) ---------- */
 const DG={el:null,src:null,timer:0,on:false,ghost:null,sx:0,sy:0,justDragged:0};
 document.addEventListener('pointerdown',function(e){ const el=e.target.closest('[data-drag]'); if(!el||e.target.closest('.fx')) return; DG.src=el.getAttribute('data-drag'); DG.sx=e.clientX; DG.sy=e.clientY; DG.on=false; clearTimeout(DG.timer);
-  DG.timer=setTimeout(()=>{ DG.on=true; const g=el.cloneNode(true); g.className+=' dragghost'; g.removeAttribute('data-act'); g.style.width=el.offsetWidth+'px'; document.body.appendChild(g); DG.ghost=g; moveGhost(DG.sx,DG.sy); el.classList.add('dragsrc'); DG.el=el; sfx('tap'); if(navigator.vibrate) navigator.vibrate(15);
+  DG.timer=setTimeout(()=>{ DG.on=true; const g=el.cloneNode(true); g.className+=' dragghost'; g.removeAttribute('data-act'); g.style.width=el.offsetWidth+'px'; (ROT?APP:document.body).appendChild(g); DG.ghost=g; moveGhost(DG.sx,DG.sy); el.classList.add('dragsrc'); DG.el=el; sfx('tap'); if(navigator.vibrate) navigator.vibrate(15);
     const cv0=el.querySelector('canvas'), cv1=g.querySelector('canvas'); if(cv0&&cv1){ cv1.width=cv0.width; cv1.height=cv0.height; cv1.getContext('2d').drawImage(cv0,0,0); } },230); });
 function moveGhost(x,y){ if(DG.ghost){ DG.ghost.style.left=(x-DG.ghost.offsetWidth/2)+'px'; DG.ghost.style.top=(y-30)+'px'; } document.querySelectorAll('.fslot.over,.fc.over').forEach(s=>s.classList.remove('over')); const t=slotAt(x,y); if(t) t.classList.add('over'); }
 function slotAt(x,y){ if(DG.ghost) DG.ghost.style.display='none'; const el=document.elementFromPoint(x,y); if(DG.ghost) DG.ghost.style.display=''; return el&&el.closest('.fslot,.fc'); }
