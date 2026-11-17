@@ -514,6 +514,36 @@ html.rotd,html.rotd body{overflow:hidden}
 #tdeco .fnt{filter:none}
 .bld.plot .bart{animation:none}
 .bld.plot .bart img{width:78%;height:78%;margin:22% 11% 0}
+
+/* ---- building themes ---- */
+#bscene{position:absolute;left:0;top:0;bottom:0;right:var(--sw);z-index:3;overflow:hidden}
+#bscene .bsi{position:absolute;left:50%;bottom:9%;height:68%;max-width:80%;width:auto;transform:translateX(-50%);object-fit:contain;filter:drop-shadow(0 10px 8px rgba(0,0,0,.4));animation:flo 4s ease-in-out infinite}
+#bscene .bsg{position:absolute;left:50%;bottom:5%;width:60%;height:12%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.45),transparent 70%)}
+#bscene .bsn{position:absolute;left:0;right:0;bottom:10px;text-align:center;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.6)}
+#bscene .bsn b{display:block;font:400 22px var(--display)}#bscene .bsn span{font:700 12px var(--body);opacity:.85}
+#bscene .bsp i{position:absolute;bottom:-10px;width:5px;height:5px;border-radius:50%;animation:bsf 6s linear infinite;opacity:0}
+@keyframes bsf{0%{transform:translateY(0);opacity:0}15%{opacity:.9}100%{transform:translateY(-300px) translateX(20px);opacity:0}}
+#bscene[data-k=shrine]{background:radial-gradient(ellipse at 50% 60%,#6a3ab8 0,#35185f 55%,#160a30 100%)}#bscene[data-k=shrine] .bsp i{background:#e6d2ff;box-shadow:0 0 8px #c9a6ff}
+#bscene[data-k=forge]{background:radial-gradient(ellipse at 50% 75%,#c8541e 0,#5a2412 50%,#1e0e0a 100%)}#bscene[data-k=forge] .bsp i{background:#ffb347;box-shadow:0 0 8px #ff7a1a}
+#bscene[data-k=tavern]{background:radial-gradient(ellipse at 50% 55%,#d99a52 0,#7a4a24 55%,#2a1608 100%)}#bscene[data-k=tavern] .bsp i{background:#ffe9a8;box-shadow:0 0 8px #ffd27a}
+#bscene[data-k=yard]{background:linear-gradient(#8ad0f0,#cfe8f0 55%,#d9b87c 56%,#a88454)}#bscene[data-k=yard] .bsp i{background:#fff;opacity:.6}#bscene[data-k=yard] .bsn{color:#3a2400;text-shadow:none}
+#bscene[data-k=library]{background:radial-gradient(ellipse at 50% 55%,#3a5fc0 0,#1a2f6a 55%,#0a1230 100%)}#bscene[data-k=library] .bsp i{background:#ffe9a0;box-shadow:0 0 8px #ffd23a}
+#app[data-bv=shrine] #sheet{background:linear-gradient(180deg,#2a1450,#150a30)}#app[data-bv=shrine] #pane{border-color:#c9a6ff;background:radial-gradient(circle at 20% 0,#5a32a0,transparent 60%),linear-gradient(180deg,#4a2a8a,#2a1560)}#app[data-bv=shrine] #pt{color:#e6d2ff;text-shadow:0 0 12px #b98cff,0 2px 0 #1d1230}
+#app[data-bv=forge] #sheet{background:linear-gradient(180deg,#3a1e14,#1e0f0a)}#app[data-bv=forge] #pane{border-color:#e08a4a;background:repeating-linear-gradient(90deg,rgba(0,0,0,.08) 0 2px,transparent 2px 22px),linear-gradient(180deg,#6a3a22,#3a2014)}#app[data-bv=forge] #pt{color:#ffb066}
+#app[data-bv=tavern] #sheet{background:linear-gradient(180deg,#3a2414,#20130a)}#app[data-bv=tavern] #pane{border-color:#e8b878;background:repeating-linear-gradient(0deg,rgba(0,0,0,.1) 0 2px,transparent 2px 26px),linear-gradient(180deg,#7a4a2a,#4a2a16)}#app[data-bv=tavern] #pt{color:#ffe3a8}
+#app[data-bv=yard] #sheet{background:linear-gradient(180deg,#4a3a1e,#2a200e)}#app[data-bv=yard] #pane{border-color:#e8c87a;background:radial-gradient(circle at 80% 100%,rgba(255,255,255,.12),transparent 50%),linear-gradient(180deg,#8a6a38,#5a4222)}#app[data-bv=yard] #pt{color:#fff0b8}
+#app[data-bv=library] #sheet{background:linear-gradient(180deg,#14224a,#0a1230)}#app[data-bv=library] #pane{border-color:#7fa8ff;background:repeating-linear-gradient(90deg,rgba(255,255,255,.04) 0 3px,transparent 3px 30px),linear-gradient(180deg,#2a4590,#182a5c)}#app[data-bv=library] #pt{color:#cfe0ff}
+#app[data-bv=forge] .bef,#app[data-bv=tavern] .bef,#app[data-bv=yard] .bef{background:rgba(0,0,0,.32)}
+
+#tname{position:absolute;inset:0;z-index:160;background:rgba(8,4,20,.82);display:flex;align-items:center;justify-content:center;transition:opacity .45s;padding:10px}
+#tname.out{opacity:0}
+.tnp{width:min(440px,94%);background:linear-gradient(#3b2d74,#231a48);border:3px solid var(--gold);border-radius:18px;padding:16px 20px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.7)}
+.tnp h2{margin:0 0 8px;font:400 clamp(20px,6vh,28px) var(--display);color:var(--gold);text-shadow:0 2px 0 var(--ink)}
+.tnp p{margin:0 0 8px;color:#e6dcff;font:700 clamp(12px,3.6vh,15px)/1.4 var(--body)}.tnp b{color:var(--gold)}
+.tnp .primary{margin-top:6px;padding:9px 30px;font-size:18px}
+#tni{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:3px solid #7f69cf;background:#150e30;color:#fff;font:400 22px var(--display);text-align:center;outline:none}
+#tni:focus{border-color:var(--gold)}.tnh{font-size:12px!important;color:var(--mist)!important;margin-top:6px!important}
+#bscene .bsi{bottom:15%;height:62%}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -3004,7 +3034,7 @@ function renderTown(){ ensureTown(); const T=$('town'); if(!T) return; $('gold')
     const bd=k==='shrine'?nb('summon'):k==='dungeon'?nb('heroes'):0;
     if(!built&&!open) return;
     h+='<button class="bld'+(built?'':' plot')+(big?' big':'')+'" data-bld="'+k+'" id="b-'+k+'" style="'+BPOS[k]+'"><span class="bart">'+(built?bimg(k):bimg('plot'))+'</span><span class="bnm">'+b.n+(built&&k!=='dungeon'?' <i>Lv '+L+'</i>':'')+'</span>'+(built?'':'<span class="bsub">Build!</span>')+(bd?'<span class="nb">!</span>':'')+'</button>'; });
-  h+='<div class="tvig"></div>'+(TORDER.some(k=>bl(k)===0&&save.best<BLD[k].unlock)?'<div class="tcap">Climb the Spire to unlock more of camp</div>':''); T.innerHTML=h; tfxStart(); townPeople(); }
+  h+='<div class="tvig"></div>'+(TORDER.some(k=>bl(k)===0&&save.best<BLD[k].unlock)?'<div class="tcap">'+(save.name?esc(save.name)+'&#39;s camp · ':'')+'Climb the Spire to unlock more of camp</div>':''); T.innerHTML=h; tfxStart(); townPeople(); }
 function townIntro(){ if(!save.seen||typeof save.seen!=='object') save.seen={}; const k=TORDER.find(k=>k!=='dungeon'&&bl(k)===0&&save.best>=BLD[k].unlock&&!save.seen[k]); if(!k) return false; save.seen[k]=1; persist(); setTimeout(()=>{ if(S.view==='town'&&S.mode==='hub') buildModal(k,true); },450); return true; }
 function openTown(){ S.view='town'; renderTown(); showMode(); townIntro(); }
 function openBld(k){ S.view='bld'; S.bld=k; S.tab=TABV[k][0]; S.slot=-1; sfx('tap'); showMode(); renderSheet(); }
@@ -3058,6 +3088,17 @@ function townPeople(){ clearInterval(TW.timer); const box=$('tpeople'); if(!box)
 const DECO=[['pond',2,97,17],['tree1',4,24,9.5],['tree1',95,26,9.5],['tree1',3,58,8],['tree1',96,62,8.5],['tree2',13,14,5.5],['tree2',87,13,5.5],['tree2',31,17,5],['tree2',69,17,5],['tree2',9,84,5],['tree2',92,92,5.5],['tree1',34,100,7],['tree1',68,100,7],
  ['rock',27,50,3.4],['rock',58,90,3.2],['rock',90,50,3.6],['rock',72,52,3],['rock',5,75,3],['flowerbed',5,44,6],['flowerbed',95,44,6],['lamp',38,58,3.6],['lamp',62,58,3.6]];
 function decoHtml(){ return '<div id="tdeco">'+DECO.slice().sort((a,b)=>a[2]-b[2]).map(d=>'<img class="dc" src="'+BIMG[d[0]]+'" alt="" draggable="false" style="left:'+d[1]+'%;top:'+d[2]+'%;width:'+d[3]+'%">').join('')+'<img class="dc fnt" src="'+BIMG.fountain+'" alt="" draggable="false" style="left:50%;top:61%;width:12.5%"></div>'; }
+
+/* ---- per-building look ---- */
+const BFLAV={shrine:'The air hums with old magic.',forge:'Hot iron and the ring of hammers.',tavern:'Laughter, lanterns and a warm fire.',yard:'Dust, grunts and wooden swords.',library:'Quiet pages and candlelight.'};
+function bsceneUpdate(){ let sc=$('bscene'); const on=S.mode==='hub'&&S.view==='bld'&&S.bld&&S.bld!=='dungeon';
+  APP.setAttribute('data-bv',S.view==='bld'?S.bld:'');
+  if(!on){ if(sc) sc.hidden=true; return; }
+  if(!sc){ sc=document.createElement('div'); sc.id='bscene'; APP.insertBefore(sc,$('top')); }
+  if(sc.getAttribute('data-k')!==S.bld){ sc.setAttribute('data-k',S.bld); let p=''; for(let i=0;i<16;i++) p+='<i style="left:'+(Math.random()*100).toFixed(0)+'%;animation-delay:'+(Math.random()*6).toFixed(1)+'s;animation-duration:'+(4+Math.random()*4).toFixed(1)+'s"></i>';
+    sc.innerHTML='<div class="bsp">'+p+'</div><div class="bsg"></div><img class="bsi" src="'+BIMG[S.bld]+'" alt="" draggable="false"><div class="bsn"><b>'+BLD[S.bld].n+'</b><span>'+BFLAV[S.bld]+'</span></div>'; }
+  sc.hidden=false; }
+{ const _av0=applyView; applyView=function(){ _av0(); bsceneUpdate(); }; }
 /* ===== boot ===== */
 /* re-load the saved game here: game.js runs before prog.js defines maxLvl, so its first load attempt throws and leaves a blank save */
 try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){ window.__loadErr2=String(e); }
@@ -3088,7 +3129,7 @@ requestAnimationFrame(frame);
 /* ===== first-time tutorial ===== */
 const TUT={i:-1,L:null,tm:0,rost0:0,clk:false,gate:false};
 const TSTEPS=[
- {t:'Welcome, Master! The Spire has <b>100 floors</b> and you are going to climb it. This is your camp. Let me show you around.',next:1},
+ {t:'Welcome, <b>{n}</b>! The Spire has <b>100 floors</b> and you are going to climb it. This is your camp. Let me show you around.',next:1},
  {sel:'#b-shrine',t:'First you need heroes. Tap the <b>Shrine</b>.',until:()=>S.view==='bld'&&S.bld==='shrine'},
  {sel:'[data-act="sum"][data-id="10"]',t:'You have enough crystals for a <b>Summon x10</b>. Tap it!',until:()=>save.roster.length>TUT.rost0,after:1700,rost:1},
  {t:'More stars means a stronger hero. Heroes who fall in battle are <b>gone forever</b>, so protect your team.',next:1},
@@ -3123,7 +3164,7 @@ function tutTick(){ const L=TUT.L; if(!L) return; const s=TSTEPS[TUT.i]; if(!s){
   { const e0=s.sel?document.querySelector(s.sel):null; if(s.sel&&!(e0&&e0.offsetParent!==null)){ L.style.display='none'; return; } }
   L.style.display='';
   const a=APP.getBoundingClientRect(), tb=$('tblk'), rg=$('tring'), bub=$('tbub'); const el=s.sel?document.querySelector(s.sel):null;
-  $('ttx').innerHTML=s.t; $('tnx').style.display=s.next?'':'none';
+  $('ttx').innerHTML=s.t.replace(/\{n\}/g,esc(save.name||'Master')); $('tnx').style.display=s.next?'':'none';
   const Wd=a.width, Ht=a.height; let rc=null;
   if(el&&el.offsetParent!==null){ const r=el.getBoundingClientRect(); rc={x:r.left-a.left-6,y:r.top-a.top-6,w:r.width+12,h:r.height+12}; }
   if(rc){ rg.style.cssText='display:block;left:'+rc.x+'px;top:'+rc.y+'px;width:'+rc.w+'px;height:'+rc.h+'px'; } else rg.style.display='none';
@@ -3137,7 +3178,13 @@ function tutTick(){ const L=TUT.L; if(!L) return; const s=TSTEPS[TUT.i]; if(!s){
   else { const left=cx>Wd/2?14:Wd-bw-14; let top=Math.min(Ht-150,Math.max(10,rc.y+rc.h/2-60)); if(rc.y>Ht*.55) top=Math.max(10,Ht*.18); bub.style.cssText+=';width:'+bw+'px;left:'+left+'px;top:'+top+'px;bottom:auto'; }
 }
 document.addEventListener('click',function(e){ if(!TUT.L) return; const s=TSTEPS[TUT.i]; if(s&&s.click&&s.sel&&e.target.closest(s.sel)) setTimeout(()=>{ if(TSTEPS[TUT.i]===s) tutGo(TUT.i+1); },60); },true);
+function nameIntro(done){ const L=document.createElement('div'); L.id='tname'; L.innerHTML='<div class="tnp"><div class="tn1"><h2>The Spire Awakens</h2><p>For a thousand years, the Spire has stood above this valley. Heroes climb. Few return.</p><p>The old keeper is gone, and the camp at its foot is now <b>yours</b>. Gather heroes, rebuild the camp, and climb all <b>100 floors</b>.</p><button class="primary" id="tn1b">Continue</button></div><div class="tn2" hidden><h2>What is your name, Master?</h2><input id="tni" maxlength="14" placeholder="Enter your name" autocomplete="off" spellcheck="false"><p class="tnh">Your heroes will call you this.</p><button class="primary" id="tn2b" disabled>Begin</button></div></div>'; APP.appendChild(L);
+  const inp=L.querySelector('#tni'), go=L.querySelector('#tn2b'); L.querySelector('#tn1b').onclick=()=>{ sfx('tap'); L.querySelector('.tn1').hidden=true; L.querySelector('.tn2').hidden=false; setTimeout(()=>inp.focus(),50); };
+  inp.oninput=()=>{ go.disabled=!inp.value.trim(); };
+  inp.onkeydown=e=>{ if(e.key==='Enter'&&inp.value.trim()) go.click(); };
+  go.onclick=()=>{ const n=inp.value.trim().slice(0,14); if(!n) return; save.name=n; persist(); sfx('win'); L.classList.add('out'); setTimeout(()=>{ L.remove(); done(); },450); }; }
 function tutBoot(){ if(save.tut==='done') return; if(save.tut===undefined){ if(save.best>0||save.floor>1||(save.pulls||0)>0&&save.roster.length>8){ save.tut='done'; persist(); return; } save.tut=0; }
+  if(!save.name){ nameIntro(()=>{ tutMake(); tutGo(0); TUT.tm=setInterval(tutTick,150); tutTick(); }); return; }
   tutMake(); { const sv=+save.tut||0; tutGo(sv>=4?4:sv>=1?1:0); } TUT.tm=setInterval(tutTick,150); tutTick(); }
 if(window.__dbg) window.__dbg.TUT=TUT;
 if(window.__dbg) window.__dbg.tutGo=tutGo;
