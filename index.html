@@ -416,13 +416,14 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const fmt=n=>Math.round(n).toLocaleString();
 const KEY='spireMaster.v1';
+const RESET_EPOCH=1; /* bump to wipe every player's save on next load */
 /* cloud save (only when signed in to the host app; otherwise local only) */
 const cloud={ref:null,dirty:false,busy:false,timer:0};
 function cloudPush(){ if(!cloud.ref) return; cloud.dirty=true; if(cloud.timer||cloud.busy) return; cloud.timer=setTimeout(cloudFlush,3000); }
 async function cloudFlush(){ cloud.timer=0; if(!cloud.ref||cloud.busy||!cloud.dirty) return; cloud.busy=true; cloud.dirty=false;
   try{ await cloud.ref.set({v:1,ts:save.ts||Date.now(),s:JSON.parse(JSON.stringify(save))}); }catch(e){ cloud.dirty=true; }
   cloud.busy=false; if(cloud.dirty&&!cloud.timer) cloud.timer=setTimeout(cloudFlush,8000); }
-function persist(){ save.ts=Date.now(); save.ver=2; try{ const j=JSON.stringify(save); localStorage.setItem(KEY,j); localStorage.setItem(KEY+'.bak',j); }catch(e){} cloudPush(); }
+function persist(){ save.ts=Date.now(); save.ver=2; save.epoch=RESET_EPOCH; try{ const j=JSON.stringify(save); localStorage.setItem(KEY,j); localStorage.setItem(KEY+'.bak',j); }catch(e){} cloudPush(); }
 function toast(msg,col){ const el=$('toast'); el.innerHTML=msg; el.style.color=col||'#fff'; el.hidden=false; el.style.animation='none'; void el.offsetWidth; el.style.animation=''; clearTimeout(toast.t); toast.t=setTimeout(()=>{ el.hidden=true; },2800); }
 /* ---------- audio ---------- */
 const AUD={ctx:null,sfx:null,mus:null};
@@ -1822,7 +1823,7 @@ let save=freshSave();
 function starterRoster(){ const mk=(st,c)=>{ const h=newHero(st,c); save.roster.push(h); return h; }; const k=mk(2,'knight'), c=mk(1,'cleric'), a=mk(1,'archer'), w=mk(1,'wizard'); save.team=[k.id,null,c.id,a.id,w.id];
   save.gear.push(mkGear('w',2,1)); save.gear.push(mkGear('a',1,1)); }
 function migrate(s){ s=Object.assign(freshSave(),s); if(!Array.isArray(s.team)||s.team.length!==5) s.team=[null,null,null,null,null]; s.roster.forEach(h=>{ h.gear=h.gear||{}; h.q=h.q||[]; syncRar(h); }); return s; }
-try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)) save=migrate(s); }catch(e){}
+try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){}
 if(!save.roster.length&&!save.stat.started){ save.stat.started=1; starterRoster(); }
 usedNames=()=>save.roster.map(h=>h.name.split(' ')[0]);
 function adopt(s){ save=migrate(s); }
@@ -2735,7 +2736,7 @@ window.addEventListener('pagehide',()=>persist());
 (async function cloudInit(){
   try{ const C=window.claude; if(!C||!C.use) return; const db=await C.use('db'), user=await C.use('user'); if(!db||!user) return; const id=await user.id(); if(!id) return;
     const ref=db.collection('data/users/'+id).doc('save'); const snap=await ref.get(); const d=snap&&snap.exists?snap.data():null; cloud.ref=ref;
-    if(d&&d.s&&typeof d.s==='object'&&(d.ts||0)>(save.ts||0)&&S.mode==='hub'){ adopt(d.s); persist(); renderSheet(); }
+    if(d&&d.s&&typeof d.s==='object'&&d.s.epoch===RESET_EPOCH&&(d.ts||0)>(save.ts||0)&&S.mode==='hub'){ adopt(d.s); persist(); renderSheet(); }
     else { cloud.dirty=true; cloudFlush(); }
   }catch(e){}
 })();
