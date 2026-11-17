@@ -490,6 +490,19 @@ html.rotd,html.rotd body{overflow:hidden}
 .tsign{position:absolute;left:50%;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;background:linear-gradient(#a8683a,#6a4026);border:2px solid #2a160a;border-radius:8px;padding:2px 8px;box-shadow:0 3px 0 rgba(0,0,0,.4);opacity:.85}
 .tsign b{font:400 clamp(9px,2.8vh,12px) var(--display);color:#ffeccb;white-space:nowrap}.tsign i{font:800 clamp(8px,2.4vh,10px) var(--body);font-style:normal;color:#ffd23a;white-space:nowrap}
 .bnew{font:400 13px var(--display);color:var(--teal);letter-spacing:.14em;margin-bottom:2px;animation:tpul 1.4s infinite}
+
+/* ---- top-down camp ---- */
+.bld{width:13%}.bld.big{width:20%}
+.bld .bart svg{overflow:visible}
+.tbg{animation:none}
+.tbg .rpl{animation:rpl 2s ease-out infinite;transform-box:fill-box;transform-origin:center}@keyframes rpl{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.8);opacity:0}}
+.tvig{background:radial-gradient(ellipse at 50% 50%,rgba(255,170,70,.07) 40%,rgba(40,16,50,.42) 100%)}
+#tpeople{position:absolute;inset:0;pointer-events:none}
+.twk{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;transition:left 4s linear,top 4s linear}
+.twk canvas{position:relative;width:30px;height:30px;display:block;border-radius:50%;border:2px solid #fff;background:#2a1a50;box-shadow:0 2px 4px rgba(0,0,0,.5)}
+.twk i{position:absolute;left:3px;right:3px;bottom:-5px;height:8px;border-radius:50%;background:rgba(0,0,0,.35)}
+.twk.mv canvas{animation:twb .45s ease-in-out infinite}@keyframes twb{50%{transform:translateY(-3px)}}
+.tbg .tw{animation:none}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -2869,71 +2882,71 @@ const TDEFS='<svg width="0" height="0" style="position:absolute"><defs>'
 +'</defs></svg>';
 const G=(x,y,r,id,c)=>'<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="url(#'+(id||'gGlow')+')" class="'+(c||'wg')+'"/>';
 const FL=(x,y,s)=>'<g transform="translate('+x+' '+y+') scale('+(s||1)+')" class="flame"><path d="M0 0C-5-5-4-10 0-16 1-10 5-7 4-2 3 1 1 2 0 2-2 2-4 1 0 0z" fill="url(#gFire)" stroke="'+TOL+'" stroke-width="1.2"/><path d="M0 0c-2-2-1-5 0-7 1 2 2 4 0 7z" fill="#fff2b0"/></g>';
+const SH='<ellipse cx="66" cy="108" rx="52" ry="10" fill="#0a1a0a" opacity=".32"/>';
 const BART={
-dungeon:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="113" rx="54" ry="7" fill="#000" opacity=".4"/>'
-+'<path d="M48 56V22l12-17 12 17v34z" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M60 5L46 24h28z" fill="url(#gRoofD)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M60 5V-3l9 3-9 3" fill="#ff5a6a" stroke="'+TOL+'" stroke-width="2"/><rect x="55" y="30" width="10" height="14" rx="5" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2"/>'
-+'<rect x="10" y="48" width="32" height="64" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="78" y="48" width="32" height="64" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="36" y="64" width="48" height="48" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/>'
-+'<rect x="10" y="48" width="32" height="64" fill="url(#pBrick)"/><rect x="78" y="48" width="32" height="64" fill="url(#pBrick)"/><rect x="36" y="64" width="48" height="48" fill="url(#pBrick)"/>'
-+'<path d="M8 48v-9h7v5h5v-5h6v5h5v-5h7v9z M76 48v-9h7v5h5v-5h6v5h5v-5h7v9z M34 64v-8h7v4h5v-4h6v4h5v-4h7v8z" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/>'
-+'<rect x="22" y="58" width="6" height="14" rx="3" fill="url(#gGlass)" class="win"/><rect x="92" y="58" width="6" height="14" rx="3" fill="url(#gGlass)" class="win"/>'
-+'<path d="M44 112V88a16 16 0 0132 0v24z" fill="#0d0720" stroke="'+TOL+'" stroke-width="3"/><path d="M49 112V90a11 11 0 0122 0v22z" fill="url(#gFire)" opacity=".85" class="win"/><path d="M54 112V84M60 112V80M66 112V84M46 96h28M48 104h24" stroke="#1d1230" stroke-width="2" opacity=".7"/>'
-+G(39,84,13)+G(81,84,13)+'<rect x="37" y="86" width="4" height="12" fill="#6a4a2a" stroke="'+TOL+'" stroke-width="1.5"/><rect x="79" y="86" width="4" height="12" fill="#6a4a2a" stroke="'+TOL+'" stroke-width="1.5"/>'+FL(39,86,.9)+FL(81,86,.9)
-+'<path d="M52 66h16v14l-8-5-8 5z" fill="#d6405a" stroke="'+TOL+'" stroke-width="2"/><path d="M38 112h44l5 5H33z" fill="#8b87ad" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/></svg>',
-shrine:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="113" rx="48" ry="7" fill="#000" opacity=".4"/>'
-+'<ellipse cx="60" cy="102" rx="48" ry="11" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><ellipse cx="60" cy="97" rx="40" ry="8" fill="#8d89b4" stroke="'+TOL+'" stroke-width="2.5"/>'
-+'<rect x="22" y="48" width="11" height="48" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="87" y="48" width="11" height="48" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/>'
-+'<path d="M17 50h86l-6-12H23z" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M27 62v8M27 76v6M92 62v8M92 76v6" stroke="#c9a6ff" stroke-width="3" stroke-linecap="round" class="win"/>'
-+G(60,64,34,'gGlowP','wg')+'<g class="flt"><path d="M60 36l14 22-14 26-14-26z" fill="url(#gCrys)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M60 36L46 58l14 26z" fill="#fff" opacity=".28"/><path d="M60 36l14 22H46z" fill="#fff" opacity=".22"/></g>'
-+'<ellipse cx="60" cy="90" rx="14" ry="4" fill="#c9a6ff" opacity=".5" class="wg"/></svg>',
-forge:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="113" rx="50" ry="7" fill="#000" opacity=".4"/>'
-+'<rect x="84" y="12" width="16" height="46" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="84" y="12" width="16" height="46" fill="url(#pBrick)"/><rect x="82" y="8" width="20" height="7" fill="#6d6990" stroke="'+TOL+'" stroke-width="2.5"/>'
-+'<circle cx="92" cy="2" r="5" class="smk" fill="#b7b0d0"/><circle cx="92" cy="2" r="4" class="smk s2" fill="#a29bc0"/><circle cx="92" cy="2" r="3" class="smk s3" fill="#c7c0e0"/>'
-+'<rect x="12" y="56" width="82" height="54" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="12" y="56" width="82" height="54" fill="url(#pBrick)"/>'
-+'<path d="M4 60L53 24l49 36z" fill="url(#gRoofW)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M4 60L53 24l49 36z" fill="url(#pPlank)" opacity=".5"/>'
-+G(40,86,30)+'<path d="M24 110V80q16-12 32 0v30z" fill="#1a0c10" stroke="'+TOL+'" stroke-width="3"/><path d="M29 110V84q11-9 22 0v26z" fill="url(#gFire)" class="win"/>'
-+'<path d="M66 100h30v10H66zM72 92h18v8H72zM96 94h8v6h-8z" fill="#6f6b8c" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/>'
-+'<path d="M96 70h14M103 62v16" stroke="#7a4626" stroke-width="3"/><path d="M99 62l8 4-8 4z" fill="#dfe8f5" stroke="'+TOL+'" stroke-width="1.5"/>'
-+'<rect x="104" y="86" width="12" height="24" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><rect x="104" y="86" width="12" height="24" fill="url(#pPlank)"/></svg>',
-tavern:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="113" rx="52" ry="7" fill="#000" opacity=".4"/>'
-+'<rect x="12" y="52" width="86" height="58" fill="url(#gPlaster)" stroke="'+TOL+'" stroke-width="3"/><path d="M12 52V110M42 52V110M70 52V110M98 52V110M12 80H98" stroke="#6a3a22" stroke-width="4"/><path d="M12 52l30 28M98 52L70 80" stroke="#6a3a22" stroke-width="3"/>'
-+'<path d="M2 56L55 18l53 38z" fill="url(#gRoofR)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M2 56L55 18l53 38z" fill="url(#pTile)"/><rect x="24" y="6" width="10" height="20" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="2.5"/>'
-+G(26,66,16)+G(84,66,16)+'<rect x="18" y="58" width="16" height="14" rx="2" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><rect x="76" y="58" width="16" height="14" rx="2" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/>'
-+'<path d="M18 100V92a8 8 0 0116 0v8z" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><path d="M44 110V86a11 11 0 0122 0v24z" fill="#4a2a18" stroke="'+TOL+'" stroke-width="3"/><path d="M44 110V86a11 11 0 0111-11v35z" fill="url(#pPlank)"/><circle cx="62" cy="98" r="1.8" fill="#ffd23a"/>'
-+'<path d="M98 36h10v12" stroke="#4a2a18" stroke-width="3" fill="none"/><rect x="100" y="42" width="18" height="20" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5" transform="rotate(4 109 52)"/><path d="M104 47h10v9a5 5 0 01-10 0z" fill="#ffd23a" stroke="'+TOL+'" stroke-width="1.8"/><path d="M104 47h10v3h-10z" fill="#fff"/>'
-+'<rect x="72" y="94" width="14" height="16" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><path d="M72 99h14M72 105h14" stroke="#4a2a18" stroke-width="2"/></svg>',
-yard:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="108" rx="56" ry="12" fill="#000" opacity=".35"/>'
-+'<ellipse cx="60" cy="100" rx="52" ry="14" fill="#c9a36a" stroke="'+TOL+'" stroke-width="3"/><ellipse cx="60" cy="100" rx="40" ry="9" fill="#e2c288" opacity=".7"/>'
-+'<path d="M10 96V78M26 106V84M94 106V84M110 96V78M44 113V92M76 113V92" stroke="url(#gWood)" stroke-width="7" stroke-linecap="round"/><path d="M10 82q50 22 100 0M10 90q50 22 100 0" stroke="#8a5a35" stroke-width="4" fill="none" stroke-linecap="round"/>'
-+'<rect x="55" y="40" width="10" height="58" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="3"/><rect x="38" y="52" width="44" height="9" rx="4" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="3"/><circle cx="60" cy="34" r="12" fill="#e9c98c" stroke="'+TOL+'" stroke-width="3"/><path d="M52 36h16M55 31l10 10M65 31l-10 10" stroke="#8a5a35" stroke-width="2"/>'
-+'<path d="M92 44l14 22M106 44L92 66" stroke="#e8edf7" stroke-width="5" stroke-linecap="round"/><path d="M92 44l14 22M106 44L92 66" stroke="#8a95b0" stroke-width="1.5"/><circle cx="20" cy="56" r="11" fill="#f4e9d0" stroke="'+TOL+'" stroke-width="3"/><circle cx="20" cy="56" r="6" fill="#e0504a"/><circle cx="20" cy="56" r="2.5" fill="#fff"/><path d="M20 67v30" stroke="url(#gWood)" stroke-width="5"/></svg>',
-library:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="113" rx="46" ry="7" fill="#000" opacity=".4"/>'
-+'<rect x="18" y="52" width="84" height="58" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="18" y="52" width="84" height="58" fill="url(#pBrick)"/>'
-+'<path d="M34 52V30l26-18 26 18v22z" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M28 32L60 4l32 28z" fill="url(#gRoofB)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M28 32L60 4l32 28z" fill="url(#pTile)"/><path d="M60 4V-4l8 3-8 3" fill="#ffd23a" stroke="'+TOL+'" stroke-width="2"/>'
-+G(60,38,14)+'<circle cx="60" cy="38" r="9" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><path d="M60 29v18M51 38h18" stroke="'+TOL+'" stroke-width="2"/>'
-+G(30,74,14)+G(90,74,14)+'<path d="M24 86V72a6 6 0 0112 0v14z" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><path d="M84 86V72a6 6 0 0112 0v14z" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/>'
-+'<path d="M46 110V84a14 14 0 0128 0v26z" fill="#1b2a5a" stroke="'+TOL+'" stroke-width="3"/><path d="M60 110V80" stroke="#0e1636" stroke-width="2"/><path d="M42 110h36l4 5H38z" fill="#8d89b4" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/>'
-+'<rect x="4" y="82" width="12" height="28" rx="2" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><path d="M6 90h8M6 98h8" stroke="#ffd23a" stroke-width="3"/></svg>',
-plot:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="100" rx="48" ry="11" fill="#000" opacity=".35"/><path d="M14 102q46 14 92 0" fill="none" stroke="#ffe27a" stroke-width="3.5" stroke-dasharray="9 6" stroke-linecap="round"/><path d="M26 100V64h68v36" fill="rgba(255,226,122,.12)" stroke="#ffe27a" stroke-width="3" stroke-dasharray="7 6" stroke-linejoin="round"/><path d="M50 58l22-22 9 9-22 22z" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M38 78l14-14 9 9z" fill="#dfe8f5" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/></svg>',
-sign:'<svg viewBox="0 0 60 80"><ellipse cx="30" cy="76" rx="20" ry="4" fill="#000" opacity=".35"/><rect x="27" y="30" width="6" height="46" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><rect x="6" y="8" width="48" height="28" rx="4" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="3"/><path d="M12 14h36" stroke="#ffe9b0" stroke-width="0"/></svg>'
+dungeon:'<svg viewBox="0 0 120 120">'+SH
++'<rect x="16" y="68" width="88" height="40" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="16" y="68" width="88" height="40" fill="url(#pBrick)"/>'
++'<path d="M8 72L22 30h76l14 42z" fill="#7d79a6" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M8 72L22 30h76l14 42z" fill="url(#pBrick)" opacity=".8"/>'
++'<path d="M22 30h76" stroke="#aeaad0" stroke-width="3"/><path d="M20 28v-6h7v6M33 28v-6h7v6M46 28v-6h7v6M67 28v-6h7v6M80 28v-6h7v6M93 28v-6h7v6" stroke="'+TOL+'" stroke-width="2" fill="#9a96c0"/>'
++'<rect x="2" y="34" width="26" height="62" rx="4" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="92" y="34" width="26" height="62" rx="4" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="2" y="34" width="26" height="62" fill="url(#pBrick)"/><rect x="92" y="34" width="26" height="62" fill="url(#pBrick)"/>'
++'<path d="M-2 38L15 6l17 32z" fill="url(#gRoofD)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M88 38l17-32 17 32z" fill="url(#gRoofD)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/>'
++'<rect x="42" y="14" width="36" height="34" rx="3" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><path d="M38 18L60 -4l22 22z" fill="url(#gRoofD)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><rect x="55" y="26" width="10" height="14" rx="5" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2"/>'
++'<path d="M60 -4V-12l10 3-10 3" fill="#ff5a6a" stroke="'+TOL+'" stroke-width="2"/>'
++'<path d="M42 108V90a18 18 0 0136 0v18z" fill="#0d0720" stroke="'+TOL+'" stroke-width="3"/><path d="M48 108V92a12 12 0 0124 0v16z" fill="url(#gFire)" opacity=".9" class="win"/><path d="M54 108V84M60 108V80M66 108V84M44 98h32" stroke="#1d1230" stroke-width="2" opacity=".7"/>'
++G(36,92,13)+G(84,92,13)+FL(36,96,.9)+FL(84,96,.9)+'<path d="M38 108h44l5 6H33z" fill="#9a96c0" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/></svg>',
+shrine:'<svg viewBox="0 0 120 120">'+SH
++'<ellipse cx="60" cy="82" rx="54" ry="30" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><ellipse cx="60" cy="78" rx="42" ry="22" fill="#a9a5cc" stroke="'+TOL+'" stroke-width="2.5"/><ellipse cx="60" cy="78" rx="30" ry="15" fill="none" stroke="#c9a6ff" stroke-width="2.5" stroke-dasharray="6 5" class="win"/>'
++'<ellipse cx="60" cy="78" rx="38" ry="20" fill="url(#gGlowP)" class="wg"/>'
++[[18,72],[102,72],[32,96],[88,96]].map(q=>'<rect x="'+(q[0]-6)+'" y="'+(q[1]-30)+'" width="12" height="32" rx="2" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="2.5"/><ellipse cx="'+q[0]+'" cy="'+(q[1]-30)+'" rx="8" ry="4" fill="#bdb9dc" stroke="'+TOL+'" stroke-width="2.5"/><rect x="'+(q[0]-1.5)+'" y="'+(q[1]-20)+'" width="3" height="10" fill="#c9a6ff" class="win"/>').join('')
++'<g class="flt"><path d="M60 22l15 24-15 28-15-28z" fill="url(#gCrys)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M60 22L45 46l15 28z" fill="#fff" opacity=".3"/></g><ellipse cx="60" cy="80" rx="12" ry="4" fill="#c9a6ff" opacity=".6" class="wg"/></svg>',
+forge:'<svg viewBox="0 0 120 120">'+SH
++'<rect x="12" y="66" width="84" height="42" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="12" y="66" width="84" height="42" fill="url(#pBrick)"/>'
++'<path d="M4 70L22 26h64l18 44z" fill="url(#gRoofW)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M4 70L22 26h64l18 44z" fill="url(#pPlank)" opacity=".6"/><path d="M22 26h64" stroke="#c99a6a" stroke-width="3"/><path d="M4 70L22 26l14 20-12 24z" fill="#000" opacity=".14"/>'
++'<rect x="72" y="4" width="18" height="34" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="72" y="4" width="18" height="34" fill="url(#pBrick)"/><rect x="70" y="0" width="22" height="7" fill="#7d79a6" stroke="'+TOL+'" stroke-width="2.5"/>'
++'<circle cx="81" cy="-4" r="5" class="smk" fill="#d7d0ee"/><circle cx="81" cy="-4" r="4" class="smk s2" fill="#c0b9d8"/><circle cx="81" cy="-4" r="3" class="smk s3" fill="#e0daf2"/>'
++G(38,92,26)+'<path d="M22 108V90q16-14 32 0v18z" fill="#1a0c10" stroke="'+TOL+'" stroke-width="3"/><path d="M27 108V93q11-10 22 0v15z" fill="url(#gFire)" class="win"/>'
++'<path d="M68 106h26v6H68zM72 98h18v8H72zM94 100h8v5h-8z" fill="#8d89b4" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/>'
++'<rect x="100" y="86" width="16" height="22" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><path d="M100 94h16M100 101h16" stroke="#4a2a18" stroke-width="2"/></svg>',
+tavern:'<svg viewBox="0 0 120 120">'+SH
++'<rect x="14" y="64" width="90" height="44" fill="url(#gPlaster)" stroke="'+TOL+'" stroke-width="3"/><path d="M14 64V108M44 64V108M74 64V108M104 64V108M14 86H104" stroke="#6a3a22" stroke-width="4"/>'
++G(28,78,14)+G(90,78,14)+'<rect x="20" y="70" width="16" height="14" rx="2" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><rect x="80" y="70" width="16" height="14" rx="2" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/>'
++'<path d="M48 108V92a11 11 0 0122 0v16z" fill="#4a2a18" stroke="'+TOL+'" stroke-width="3"/><circle cx="66" cy="100" r="1.8" fill="#ffd23a"/>'
++'<path d="M6 68L26 22h68l20 46z" fill="url(#gRoofR)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M6 68L26 22h68l20 46z" fill="url(#pTile)"/><path d="M26 22h68" stroke="#ffb09a" stroke-width="3"/><path d="M6 68L26 22l14 22-12 24z" fill="#000" opacity=".14"/>'
++'<rect x="78" y="10" width="14" height="22" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="2.5"/><rect x="76" y="6" width="18" height="7" fill="#7d79a6" stroke="'+TOL+'" stroke-width="2.5"/>'
++'<rect x="102" y="52" width="16" height="18" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><path d="M106 57h8v7a4 4 0 01-8 0z" fill="#ffd23a" stroke="'+TOL+'" stroke-width="1.5"/>'
++'<rect x="2" y="92" width="14" height="16" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><path d="M2 98h14M2 104h14" stroke="#4a2a18" stroke-width="2"/></svg>',
+yard:'<svg viewBox="0 0 120 120">'+SH
++'<ellipse cx="60" cy="76" rx="56" ry="34" fill="#9a6a3a" stroke="'+TOL+'" stroke-width="3"/><ellipse cx="60" cy="76" rx="48" ry="28" fill="#dfbf86"/><ellipse cx="60" cy="78" rx="30" ry="16" fill="#e9cf9a" opacity=".8"/>'
++Array.from({length:18},(_,i)=>{ const a=i/18*6.283, x=60+Math.cos(a)*53, y=76+Math.sin(a)*32; return '<rect x="'+(x-2.5).toFixed(1)+'" y="'+(y-9).toFixed(1)+'" width="5" height="11" rx="1.5" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="1.6"/>'; }).join('')
++'<g><rect x="30" y="38" width="6" height="34" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><rect x="21" y="46" width="24" height="6" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><circle cx="33" cy="34" r="8" fill="#ecd29a" stroke="'+TOL+'" stroke-width="2.5"/></g>'
++'<g><rect x="78" y="42" width="6" height="30" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><rect x="69" y="49" width="24" height="6" rx="3" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><circle cx="81" cy="38" r="8" fill="#ecd29a" stroke="'+TOL+'" stroke-width="2.5"/></g>'
++'<circle cx="58" cy="58" r="10" fill="#f6ecd4" stroke="'+TOL+'" stroke-width="2.5"/><circle cx="58" cy="58" r="6" fill="#e0504a"/><circle cx="58" cy="58" r="2.4" fill="#fff"/><rect x="38" y="84" width="40" height="8" rx="2" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="2.5"/><path d="M44 80l6 12M54 80l6 12M64 80l6 12" stroke="#e8edf7" stroke-width="3" stroke-linecap="round"/></svg>',
+library:'<svg viewBox="0 0 120 120">'+SH
++'<rect x="12" y="64" width="94" height="44" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><rect x="12" y="64" width="94" height="44" fill="url(#pBrick)"/>'
++G(30,86,13)+G(88,86,13)+'<path d="M22 100V84a8 8 0 0116 0v16z" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><path d="M80 100V84a8 8 0 0116 0v16z" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/>'
++'<path d="M46 108V92a13 13 0 0126 0v16z" fill="#1b2a5a" stroke="'+TOL+'" stroke-width="3"/><path d="M42 108h34l4 5H38z" fill="#9a96c0" stroke="'+TOL+'" stroke-width="2.5" stroke-linejoin="round"/>'
++'<path d="M4 68L22 28h72l18 40z" fill="url(#gRoofB)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M4 68L22 28h72l18 40z" fill="url(#pTile)"/><path d="M22 28h72" stroke="#a8bcff" stroke-width="3"/><path d="M4 68L22 28l14 22-12 22z" fill="#000" opacity=".14"/>'
++'<rect x="44" y="6" width="30" height="30" rx="3" fill="url(#gStone)" stroke="'+TOL+'" stroke-width="3"/><path d="M40 10L59 -8l19 18z" fill="url(#gRoofB)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/>'+G(59,22,12)+'<circle cx="59" cy="22" r="7" fill="url(#gGlass)" class="win" stroke="'+TOL+'" stroke-width="2.5"/><path d="M59 -8V-15l8 3-8 3" fill="#ffd23a" stroke="'+TOL+'" stroke-width="1.8"/></svg>',
+plot:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="80" rx="52" ry="28" fill="#0a1a0a" opacity=".25"/><ellipse cx="60" cy="78" rx="48" ry="26" fill="rgba(255,226,122,.16)" stroke="#ffe27a" stroke-width="3.5" stroke-dasharray="9 6"/><path d="M44 66l22-22 9 9-22 22z" fill="url(#gWood)" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/><path d="M32 86l14-14 9 9z" fill="#dfe8f5" stroke="'+TOL+'" stroke-width="3" stroke-linejoin="round"/></svg>'
 };
-/* ---- background scene ---- */
-function sceneSvg(){ let r=7; const rnd=()=>{ r=(r*9301+49297)%233280; return r/233280; };
-  let s='<svg class="tbg" viewBox="0 0 1000 460" preserveAspectRatio="xMidYMax slice"><defs><linearGradient id="sSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b0726"/><stop offset=".45" stop-color="#2d1763"/><stop offset=".75" stop-color="#8a3f86"/><stop offset="1" stop-color="#e98a7a"/></linearGradient><linearGradient id="sGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4c7a45"/><stop offset=".5" stop-color="#2f5a3a"/><stop offset="1" stop-color="#173626"/></linearGradient><linearGradient id="sPath" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9ad7c"/><stop offset="1" stop-color="#8d7249"/></linearGradient><radialGradient id="sMoon"><stop offset="0" stop-color="#fff6d8" stop-opacity=".9"/><stop offset=".4" stop-color="#fff6d8" stop-opacity=".25"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></radialGradient><radialGradient id="sOrb"><stop offset="0" stop-color="#ffe9a0"/><stop offset="1" stop-color="#ffe9a0" stop-opacity="0"/></radialGradient></defs>';
-  s+='<rect width="1000" height="460" fill="url(#sSky)"/>';
-  for(let i=0;i<70;i++){ const x=rnd()*1000,y=rnd()*210,z=.6+rnd()*1.3; s+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="'+z.toFixed(1)+'" fill="#fff" opacity="'+(.35+rnd()*.5).toFixed(2)+'" class="'+(i%4?'':'tw')+'" style="animation-delay:'+(rnd()*3).toFixed(1)+'s"/>'; }
-  s+='<circle cx="820" cy="86" r="90" fill="url(#sMoon)"/><circle cx="820" cy="86" r="34" fill="#fff3cf"/><circle cx="808" cy="76" r="7" fill="#e8d7a8"/><circle cx="832" cy="98" r="5" fill="#e8d7a8"/><circle cx="826" cy="72" r="3.5" fill="#e8d7a8"/>';
-  s+='<g class="cl c1"><ellipse cx="180" cy="86" rx="90" ry="14" fill="#7a4a9a" opacity=".35"/><ellipse cx="240" cy="78" rx="60" ry="11" fill="#9a5aa8" opacity=".3"/></g><g class="cl c2"><ellipse cx="600" cy="130" rx="110" ry="13" fill="#8a4a9a" opacity=".3"/><ellipse cx="660" cy="122" rx="70" ry="10" fill="#b86aa8" opacity=".28"/></g>';
-  s+='<path d="M0 290L70 200 130 250 210 170 290 245 370 190 450 255 540 175 620 250 700 195 790 260 870 185 940 240 1000 205V300H0z" fill="#2a1d5e"/>';
-  s+='<path d="M486 290V120l14-30 14 30v170z" fill="#1c1346"/><path d="M500 90l-14 32h28z" fill="#150e38"/><path d="M492 130h16M492 170h16M492 210h16" stroke="#3a2c78" stroke-width="3"/><circle cx="500" cy="84" r="28" fill="url(#sOrb)" class="wg"/><circle cx="500" cy="84" r="5" fill="#fff6c8"/><path d="M500 84L420 0M500 84L580 0" stroke="#ffe9a0" stroke-width="2" opacity=".12"/>';
-  s+='<path d="M0 305L90 250 170 285 260 235 350 280 450 245 560 285 650 240 760 283 860 245 1000 290V330H0z" fill="#231858"/>';
-  for(let x=-10;x<1010;x+=19){ const h=40+rnd()*36, y=316; s+='<path d="M'+x+' '+y+'l8-'+h.toFixed(0)+' 8 '+h.toFixed(0)+'z" fill="#150f38"/><path d="M'+(x+1)+' '+(y-h*.45).toFixed(0)+'l7-'+(h*.6).toFixed(0)+' 7 '+(h*.6).toFixed(0)+'z" fill="#150f38"/>'; }
-  s+='<path d="M0 312Q250 296 500 308T1000 304V460H0z" fill="url(#sGr)"/>';
-  for(let i=0;i<150;i++){ const x=rnd()*1000,y=318+rnd()*140; s+='<path d="M'+x.toFixed(0)+' '+y.toFixed(0)+'l-2-6M'+x.toFixed(0)+' '+y.toFixed(0)+'l1-7M'+x.toFixed(0)+' '+y.toFixed(0)+'l3-5" stroke="'+(i%3?'#6a9a58':'#3c6a44')+'" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>'; }
-  for(let i=0;i<26;i++){ const x=rnd()*1000,y=330+rnd()*120, c=['#ff9ac8','#ffe27a','#9ad0ff','#fff'][i%4]; s+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="2.4" fill="'+c+'"/><circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="1" fill="#ffe27a"/>'; }
-  s+='<path d="M500 462C470 420 430 380 470 350 500 330 520 334 560 352 590 380 560 420 600 462z" fill="url(#sPath)" stroke="#6a5333" stroke-width="3" opacity=".96"/>';
-  for(let i=0;i<46;i++){ const t=rnd(), y=345+t*110, w=18+t*60, x=530+(rnd()-.5)*w*1.1; s+='<ellipse cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" rx="'+(3+t*7).toFixed(1)+'" ry="'+(1.6+t*3).toFixed(1)+'" fill="#a98f60" stroke="#6a5333" stroke-width=".8"/>'; }
-  [[110,392],[390,372],[690,372],[900,398]].forEach(p=>{ s+='<g><rect x="'+(p[0]-2)+'" y="'+(p[1]-46)+'" width="4" height="48" fill="#3a2a1a"/><rect x="'+(p[0]-7)+'" y="'+(p[1]-58)+'" width="14" height="14" rx="3" fill="#ffe9a0" stroke="#1d1230" stroke-width="2"/><circle cx="'+p[0]+'" cy="'+(p[1]-51)+'" r="26" fill="url(#sOrb)" class="wg"/></g>'; });
-  s+='<path d="M0 430q70-30 130 0t0 40H0z" fill="#142a22"/><path d="M1000 436q-80-34-150 0t0 40h150z" fill="#142a22"/><ellipse cx="40" cy="450" rx="60" ry="26" fill="#0f2219"/><ellipse cx="960" cy="452" rx="60" ry="26" fill="#0f2219"/>';
+/* ---- background scene (top-down) ---- */
+function sceneSvg(V){ V=V||{shrine:1,library:1,tavern:1,yard:1,forge:1}; let r=11; const rnd=()=>{ r=(r*9301+49297)%233280; return r/233280; };
+  let s='<svg class="tbg" viewBox="0 0 1000 460" preserveAspectRatio="xMidYMid slice"><defs><radialGradient id="sGr" cx=".5" cy=".5" r=".75"><stop offset="0" stop-color="#78b255"/><stop offset=".6" stop-color="#5a9246"/><stop offset="1" stop-color="#3a6e3c"/></radialGradient><linearGradient id="sRoad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6b983"/><stop offset="1" stop-color="#b5985f"/></linearGradient><radialGradient id="sWater"><stop offset="0" stop-color="#6fd0f0"/><stop offset="1" stop-color="#3a8fc8"/></radialGradient></defs>';
+  s+='<rect width="1000" height="460" fill="url(#sGr)"/>';
+  for(let i=0;i<40;i++){ const x=rnd()*1000,y=rnd()*460; s+='<ellipse cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" rx="'+(30+rnd()*50).toFixed(0)+'" ry="'+(14+rnd()*24).toFixed(0)+'" fill="'+(i%2?'#86bd5e':'#4d8640')+'" opacity=".35"/>'; }
+  const road='stroke-linecap="round" stroke-linejoin="round" fill="none"';
+  const R=(d,w)=>'<path d="'+d+'" stroke="#6a5333" stroke-width="'+(w+7)+'" '+road+'/><path d="'+d+'" stroke="url(#sRoad)" stroke-width="'+w+'" '+road+'/>';
+  const x0=V.shrine?205:(V.tavern?250:500), x1=V.library?825:(V.forge?755:500); s+=R('M500 186V262',26); if(x1>x0) s+=R('M'+x0+' 262H'+x1,22); if(V.shrine) s+=R('M205 262V300',16); if(V.library) s+=R('M825 262V300',16); if(V.tavern) s+=R('M250 262V372',18); if(V.forge) s+=R('M755 262V372',18); if(V.yard) s+=R('M500 262V372',18);
+  s+='<circle cx="500" cy="262" r="46" fill="#6a5333"/><circle cx="500" cy="262" r="41" fill="url(#sRoad)"/>';
+  for(let i=0;i<22;i++){ const a=rnd()*6.28, d=10+rnd()*30; s+='<ellipse cx="'+(500+Math.cos(a)*d).toFixed(0)+'" cy="'+(262+Math.sin(a)*d).toFixed(0)+'" rx="5" ry="3.4" fill="#c4a672" stroke="#8a7044" stroke-width=".8"/>'; }
+  s+='<circle cx="500" cy="262" r="21" fill="#8d89b4" stroke="#1d1230" stroke-width="3"/><circle cx="500" cy="262" r="16" fill="url(#sWater)"/><circle cx="500" cy="262" r="6" fill="#a9a5cc" stroke="#1d1230" stroke-width="2.5"/><circle cx="500" cy="262" r="10" fill="none" stroke="#fff" stroke-width="1.6" opacity=".7" class="rpl"/>';
+  s+='<ellipse cx="118" cy="402" rx="86" ry="40" fill="#2f6a52" stroke="#1d3a2a" stroke-width="3"/><ellipse cx="118" cy="402" rx="76" ry="33" fill="url(#sWater)"/><ellipse cx="96" cy="396" rx="26" ry="8" fill="#fff" opacity=".18"/><ellipse cx="150" cy="412" rx="10" ry="5" fill="#4fae5a" stroke="#1d3a2a" stroke-width="1.5"/><ellipse cx="82" cy="414" rx="8" ry="4" fill="#4fae5a" stroke="#1d3a2a" stroke-width="1.5"/>';
+  for(let i=0;i<190;i++){ const x=rnd()*1000,y=rnd()*460; s+='<path d="M'+x.toFixed(0)+' '+y.toFixed(0)+'l-2-6M'+x.toFixed(0)+' '+y.toFixed(0)+'l1-7M'+x.toFixed(0)+' '+y.toFixed(0)+'l3-5" stroke="'+(i%3?'#a0d070':'#3a7a40')+'" stroke-width="1.6" stroke-linecap="round" opacity=".75"/>'; }
+  for(let i=0;i<40;i++){ const x=rnd()*1000,y=rnd()*460, c=['#ff9ac8','#ffe27a','#9ad0ff','#fff'][i%4]; s+='<circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="2.8" fill="'+c+'"/><circle cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" r="1.1" fill="#ffe27a"/>'; }
+  const tree=(x,y,k)=>'<ellipse cx="'+(x+k*.22)+'" cy="'+(y+k*.7)+'" rx="'+(k*.95)+'" ry="'+(k*.4)+'" fill="#0a1a0a" opacity=".3"/><circle cx="'+x+'" cy="'+y+'" r="'+k+'" fill="#2f7a3c" stroke="#164a26" stroke-width="2.5"/><circle cx="'+(x-k*.25)+'" cy="'+(y-k*.28)+'" r="'+(k*.62)+'" fill="#4aa04c"/><circle cx="'+(x-k*.35)+'" cy="'+(y-k*.4)+'" r="'+(k*.3)+'" fill="#7acb64" opacity=".8"/>';
+  [[40,40,34],[110,24,26],[24,130,28],[60,220,30],[930,36,34],[880,22,24],[968,134,28],[940,222,30],[330,26,24],[650,30,26],[40,330,26],[960,330,30],[380,438,24],[640,440,26],[890,432,28],[300,205,18],[700,205,18]].forEach(q=>{ s+=tree(q[0],q[1],q[2]); });
+  for(let i=0;i<10;i++){ const x=rnd()*1000,y=rnd()*460; s+='<ellipse cx="'+x.toFixed(0)+'" cy="'+y.toFixed(0)+'" rx="9" ry="6" fill="#8a87a8" stroke="#1d1230" stroke-width="2"/>'; }
+  [[360,236],[640,236]].forEach(p=>{ s+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="22" fill="url(#gGlow)" class="wg"/><circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="#3a2a1a" stroke="#1d1230" stroke-width="2"/><circle cx="'+p[0]+'" cy="'+(p[1]-5)+'" r="3.5" fill="#ffe9a0"/>'; });
   return s+'</svg>'; }
 /* ---- ambient particles ---- */
 const TFX={run:false,P:[],t:0};
@@ -2973,14 +2986,14 @@ const _trainCost0=trainCost; trainCost=function(h){ return Math.max(1,Math.round
 const _gainExp0=gainExp; gainExp=function(h,x){ return _gainExp0(h,Math.round(x*(1+.1*bl('library')))); };
 function firstCry(f,k){ return k==='boss'?300:k==='mini'?120:60; }
 function floorStones(f,k,first){ return k==='boss'?(first?8:4):k==='mini'?(first?4:2):(Math.random()<(first?.35:.2)?1:0); }
-const BPOS={shrine:'left:7%;bottom:30%',tavern:'left:21%;bottom:8%',dungeon:'left:37%;bottom:14%',forge:'left:64%;bottom:36%',yard:'left:65%;bottom:6%',library:'left:82%;bottom:30%'};
+const BPOS={dungeon:'left:40%;top:1%',shrine:'left:14%;top:30%',library:'left:76%;top:30%',tavern:'left:18.5%;top:57%',yard:'left:43.5%;top:61%',forge:'left:69%;top:57%'};
 function renderTown(){ ensureTown(); const T=$('town'); if(!T) return; $('gold').textContent=fmt(save.gold); $('cryv').textContent=fmt(save.cry); $('shv').textContent=fmt(save.shards); $('stv').textContent=fmt(save.stones||0);
-  let h=TDEFS+sceneSvg()+'<canvas id="tfx"></canvas>';
+  const V={}; TORDER.forEach(k=>{ V[k]=bl(k)>0||save.best>=BLD[k].unlock; }); let h=TDEFS+sceneSvg(V)+'<canvas id="tfx"></canvas><div id="tpeople"></div>';
   TORDER.forEach(k=>{ const b=BLD[k], L=bl(k), built=L>0, big=k==='dungeon', open=save.best>=b.unlock;
     const bd=k==='shrine'?nb('summon'):k==='dungeon'?nb('heroes'):0;
     if(!built&&!open) return;
     h+='<button class="bld'+(built?'':' plot')+(big?' big':'')+'" data-bld="'+k+'" id="b-'+k+'" style="'+BPOS[k]+'"><span class="bart">'+(built?BART[k]:BART.plot)+'</span><span class="bnm">'+b.n+(built&&k!=='dungeon'?' <i>Lv '+L+'</i>':'')+'</span>'+(built?'':'<span class="bsub">Build!</span>')+(bd?'<span class="nb">!</span>':'')+'</button>'; });
-  h+='<div class="tvig"></div>'+(TORDER.some(k=>bl(k)===0&&save.best<BLD[k].unlock)?'<div class="tcap">Climb the Spire to unlock more of camp</div>':''); T.innerHTML=h; tfxStart(); }
+  h+='<div class="tvig"></div>'+(TORDER.some(k=>bl(k)===0&&save.best<BLD[k].unlock)?'<div class="tcap">Climb the Spire to unlock more of camp</div>':''); T.innerHTML=h; tfxStart(); townPeople(); }
 function townIntro(){ if(!save.seen||typeof save.seen!=='object') save.seen={}; const k=TORDER.find(k=>k!=='dungeon'&&bl(k)===0&&save.best>=BLD[k].unlock&&!save.seen[k]); if(!k) return false; save.seen[k]=1; persist(); setTimeout(()=>{ if(S.view==='town'&&S.mode==='hub') buildModal(k,true); },450); return true; }
 function openTown(){ S.view='town'; renderTown(); showMode(); townIntro(); }
 function openBld(k){ S.view='bld'; S.bld=k; S.tab=TABV[k][0]; S.slot=-1; sfx('tap'); showMode(); renderSheet(); }
@@ -3021,6 +3034,14 @@ document.addEventListener('click',function(e){
 
 S.view='town'; S.bld='dungeon';
 if(typeof adopt==='function'){ const _ad0=adopt; adopt=function(s){ const r=_ad0(s); applyTown(); return r; }; }
+
+/* ---- wandering heroes ---- */
+const TWP=[[50,47],[24,56],[50,68],[75,56],[24,46],[79,46],[50,40],[36,50],[64,50],[50,58]];
+const TW={timer:0};
+function townPeople(){ clearInterval(TW.timer); const box=$('tpeople'); if(!box) return; let hs=(save.team||[]).map(heroById).filter(Boolean); if(!hs.length) hs=save.roster.slice(0,4); hs=hs.slice(0,5); box.innerHTML='';
+  hs.forEach((h,i)=>{ const w=document.createElement('div'); w.className='twk'; const p=TWP[(i*2)%TWP.length]; w.style.left=p[0]+'%'; w.style.top=p[1]+'%'; w.innerHTML='<i></i><canvas width="30" height="30"></canvas>'; box.appendChild(w); try{ heroPortrait(w.querySelector('canvas'),h,30); }catch(e){} });
+  const step=()=>{ if(S.view!=='town'||S.mode!=='hub'){ return; } box.querySelectorAll('.twk').forEach(w=>{ if(Math.random()<.7){ const p=TWP[Math.floor(Math.random()*TWP.length)]; w.style.left=p[0]+'%'; w.style.top=p[1]+'%'; w.classList.add('mv'); setTimeout(()=>w.classList.remove('mv'),4200); } }); };
+  TW.timer=setInterval(step,4300); }
 /* ===== boot ===== */
 /* re-load the saved game here: game.js runs before prog.js defines maxLvl, so its first load attempt throws and leaves a blank save */
 try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){ window.__loadErr2=String(e); }
