@@ -426,6 +426,18 @@ button:active:not(:disabled){transform:scale(.93)}
 
 html.rotd #rot{display:none!important}
 html.rotd,html.rotd body{overflow:hidden}
+#tut{position:absolute;inset:0;z-index:150;pointer-events:none}
+#tblk{position:absolute;inset:0;background:rgba(8,4,20,.72);pointer-events:auto}
+#tring{position:absolute;border:3px solid var(--gold);border-radius:12px;box-shadow:0 0 0 2px #120a26,0 0 18px rgba(255,207,74,.9);pointer-events:none;animation:tpul 1s ease-in-out infinite}
+@keyframes tpul{50%{box-shadow:0 0 0 2px #120a26,0 0 30px rgba(255,207,74,1);transform:scale(1.03)}}
+#tbub{position:absolute;pointer-events:auto;background:linear-gradient(#3b2d74,#231a48);border:3px solid var(--gold);border-radius:14px;padding:12px 14px;color:var(--text);font:600 14px/1.35 var(--body);box-shadow:0 8px 24px rgba(0,0,0,.6)}
+#tbub b{color:var(--gold)}
+#tnx{margin-top:10px;width:100%;padding:8px;font-size:16px}
+#tskip{position:absolute;top:6px;right:6px;pointer-events:auto;background:#120a26;color:#c3b5ea;border:2px solid #4a3a85;border-radius:16px;padding:5px 12px;font:700 12px var(--body);z-index:3}
+#tcf{position:absolute;inset:0;background:rgba(5,2,15,.8);display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:4}
+#tcf .panel{padding:16px 20px;text-align:center;max-width:300px}
+#tcf h3{margin:0 0 6px;font:400 22px var(--display);color:var(--gold)}#tcf p{margin:0 0 12px;color:var(--mist)}
+#tcf .row{display:flex;gap:10px;justify-content:center}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -1872,7 +1884,7 @@ let save=freshSave();
 function starterRoster(){ const mk=(st,c)=>{ const h=newHero(st,c); save.roster.push(h); return h; }; const k=mk(2,'knight'), c=mk(1,'cleric'), a=mk(1,'archer'), w=mk(1,'wizard'); save.team=[k.id,null,c.id,a.id,w.id];
   save.gear.push(mkGear('w',2,1)); save.gear.push(mkGear('a',1,1)); }
 function migrate(s){ s=Object.assign(freshSave(),s); if(!Array.isArray(s.team)||s.team.length!==5) s.team=[null,null,null,null,null]; s.roster.forEach(h=>{ h.gear=h.gear||{}; h.q=h.q||[]; syncRar(h); }); return s; }
-try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){}
+try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){ window.__loadErr=String(e); }
 if(!save.roster.length&&!save.stat.started){ save.stat.started=1; starterRoster(); }
 usedNames=()=>save.roster.map(h=>h.name.split(' ')[0]);
 function adopt(s){ save=migrate(s); }
@@ -2782,6 +2794,8 @@ buildMaster=function(){ _pzBM(); const mb=$('mbar'); if(!mb) return; mb.querySel
 setInterval(()=>{ if(!document.hidden) persist(); },8000);
 window.addEventListener('pagehide',()=>persist());
 /* ===== boot ===== */
+/* re-load the saved game here: game.js runs before prog.js defines maxLvl, so its first load attempt throws and leaves a blank save */
+try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){ window.__loadErr2=String(e); }
 (async function cloudInit(){
   try{ const C=window.claude; if(!C||!C.use) return; const db=await C.use('db'), user=await C.use('user'); if(!db||!user) return; const id=await user.id(); if(!id) return;
     const ref=db.collection('data/users/'+id).doc('save'); const snap=await ref.get(); const d=snap&&snap.exists?snap.data():null; cloud.ref=ref;
@@ -2793,7 +2807,7 @@ document.addEventListener('visibilitychange',()=>{ if(document.hidden){ persist(
 updSnd(); showMode(); renderSheet();
 if(!resolveAbandoned()){ const v=volunteers(); if(v){ renderSheet(); setTimeout(()=>toast('A new band of recruits arrives at camp. Time to start over.','#7dffb0'),900); } }
 { const got=dailyLogin(); if(got) setTimeout(()=>toast('Daily reward: +'+got+' crystals, +200 gold','#c9a6ff'),600); }
-if(!save.hint.start) setTimeout(()=>hintOnce('start','Welcome, Master! Summon heroes, set your team of 5 (front row tanks, back row damage), and climb the Spire. Heroes who fall are gone forever. You start with crystals for a 10x summon!'),500);
+if(save.tut==='done'||save.tut===undefined&&false) {} ; if(false&&!save.hint.start) setTimeout(()=>hintOnce('start','Welcome, Master! Summon heroes, set your team of 5 (front row tanks, back row damage), and climb the Spire. Heroes who fall are gone forever. You start with crystals for a 10x summon!'),500);
 window.__dbg={PZ:PZ,openGuide:openGuide,wavesFor:wavesFor,AN:AN,showSummon:(l)=>showSummon(l),newHero:newHero,gainExp:gainExp,ascend:ascend,setCaptain:setCaptain,swapSlots:swapSlots,S:S,save:()=>save,startStage:startStage,summon:summon,heroStats:heroStats,teamHeroes:teamHeroes,stageEnd:stageEnd,openHero:openHero,useMaster:useMaster,retreat:retreat,promote:promote,train:train};
 requestAnimationFrame(frame);
 /* ===== intro / title screen ===== */
@@ -2802,8 +2816,62 @@ requestAnimationFrame(frame);
   for(let i=0;i<14;i++){ const e=document.createElement('i'); e.className='em'; e.style.left=(55+Math.random()*40)+'%'; e.style.top=(60+Math.random()*38)+'%'; e.style.animationDelay=(Math.random()*5)+'s'; st.appendChild(e); }
   let phase=0, tm=0;
   function title(){ if(phase>0) return; phase=1; clearTimeout(tm); $('ilogo').hidden=true; $('ititle').hidden=false; }
-  function start(){ if(phase===0){ title(); return; } if(phase!==1) return; phase=2; try{ audioInit(); sfx('win'); }catch(e){} I.classList.add('out'); setTimeout(()=>{ I.remove(); },600); }
+  function start(){ if(phase===0){ title(); return; } if(phase!==1) return; phase=2; try{ audioInit(); sfx('win'); }catch(e){} I.classList.add('out'); setTimeout(()=>{ I.remove(); if(typeof tutBoot==='function') tutBoot(); },600); }
   tm=setTimeout(title,2600);
   I.addEventListener('pointerdown',start);
 })();
+/* ===== first-time tutorial ===== */
+const TUT={i:-1,L:null,tm:0,rost0:0,clk:false,gate:false};
+const TSTEPS=[
+ {t:'Welcome, Master! The Spire has <b>100 floors</b> and you are going to climb it. Let me show you the ropes.',next:1},
+ {sel:'.tab[data-tab="summon"]',t:'First you need heroes. Tap <b>Summon</b>.',until:()=>S.tab==='summon'},
+ {sel:'[data-act="sum"][data-id="10"]',t:'You have enough crystals for a <b>Summon x10</b>. Tap it!',until:()=>save.roster.length>TUT.rost0,after:1700},
+ {t:'More stars means a stronger hero. Heroes who fall in battle are <b>gone forever</b>, so protect your team.',next:1},
+ {sel:'.tab[data-tab="team"]',t:'Now build your team. Tap <b>Team</b>.',until:()=>S.tab==='team'},
+ {sel:'[data-act="autofill"]',t:'Your team has <b>5 slots</b>: 2 in the <b>front row</b> for tanks, 3 in the <b>back row</b> for healers and damage. Tap <b>Auto-fill</b> to set a strong team.',click:1},
+ {sel:'.tbar',t:'You can also <b>hold and drag</b> heroes to swap their spots, and tap a hero to make them <b>captain</b>.',next:1,soft:1},
+ {sel:'.tab[data-tab="heroes"]',t:'Tap <b>Heroes</b> to see everyone you own.',until:()=>S.tab==='heroes'},
+ {t:'Tap a hero to upgrade them. Leveling is <b>slow</b>: it takes training and lots of battles. Every 10 levels needs an <b>ascension</b> using orange stones.',next:1},
+ {sel:'#go',t:'Ready? Tap <b>Go</b> to fight Floor 1. There is no retreating once you start!',click:1},
+ {sel:'#mbar',t:'Your three <b>Commands</b>: <b>Rally</b> heals, <b>Focus</b> hits the biggest threat, <b>Guard</b> shields your front row. Tap one any time, they recharge.',next:1,soft:1,need:()=>S.mode==='battle'},
+ {t:'Heroes fight on their own. Keep an eye on their health and mood. The more they win, the happier they get.',next:1,soft:1,need:()=>S.mode==='battle'},
+ {wait:()=>S.mode==='result'},
+ {t:'After every floor you get a <b>recap</b> showing who did the work. Tap to return to camp, then keep climbing!',next:1,soft:1,top:1},
+ {t:'That is it, Master. Here is <b>100 crystals</b> to start. Good luck in the Spire!',next:1,fin:1}
+];
+function tutDone(reward){ save.tut='done'; if(reward){ save.cry+=100; if(typeof updTop==='function') try{updTop();}catch(e){} } persist(); clearInterval(TUT.tm); if(TUT.L){ TUT.L.remove(); TUT.L=null; } try{ renderSheet(); }catch(e){} }
+function tutMake(){ if(TUT.L) return; const L=document.createElement('div'); L.id='tut'; L.innerHTML='<div id="tblk"></div><div id="tring"></div><div id="tbub"><div id="ttx"></div><button id="tnx" class="primary">Next</button></div><button id="tskip">Skip tutorial</button><div id="tcf" hidden><div class="panel"><h3>Skip the tutorial?</h3><p>You will not see it again.</p><div class="row"><button id="tyes" class="buy">Yes, skip</button><button id="tno" class="buy gold">Keep going</button></div></div></div>'; APP.appendChild(L); TUT.L=L;
+  $('tskip').onclick=()=>{ $('tcf').hidden=false; };
+  $('tno').onclick=()=>{ $('tcf').hidden=true; };
+  $('tyes').onclick=()=>tutDone(false);
+  $('tnx').onclick=()=>{ sfx('tap'); const s=TSTEPS[TUT.i]; if(s.fin) return tutDone(true); tutGo(TUT.i+1); }; }
+function tutGo(i){ TUT.i=i; TUT.gate=false; if(i<=9) save.tut=i; const s=TSTEPS[i]; if(!s){ tutDone(true); return; } if(s.after){ TUT.gate=true; setTimeout(()=>{ TUT.gate=false; },s.after); } if(i===2) TUT.rost0=save.roster.length; }
+function tutTick(){ const L=TUT.L; if(!L) return; const s=TSTEPS[TUT.i]; if(!s){ return; }
+  if(save.tut==='done'){ tutDone(false); return; }
+  if((TUT.i===10||TUT.i===11)&&S.mode==='result'){ tutGo(12); return; }
+  if(s.wait){ if(s.wait()){ tutGo(TUT.i+1); return; } if(!s.t){ L.style.display='none'; return; } }
+  if(s.until&&!TUT.gate&&s.until()){ tutGo(TUT.i+1); return; }
+  const busy=$('sumfx')||(!$('modal').hidden&&!(s.top))||S.mode==='result'&&!s.top&&!s.wait; const modalOpen=!$('modal').hidden;
+  if(TUT.gate||(s.wait&&!s.t)||(modalOpen&&!s.top&&TUT.i<13)||$('sumfx')||(S.mode==='battle'&&TUT.i<10)||(s.need&&!s.need())){ L.style.display='none'; return; }
+  L.style.display='';
+  const a=APP.getBoundingClientRect(), tb=$('tblk'), rg=$('tring'), bub=$('tbub'); const el=s.sel?document.querySelector(s.sel):null;
+  $('ttx').innerHTML=s.t; $('tnx').style.display=s.next?'':'none';
+  const Wd=a.width, Ht=a.height; let rc=null;
+  if(el&&el.offsetParent!==null){ const r=el.getBoundingClientRect(); rc={x:r.left-a.left-6,y:r.top-a.top-6,w:r.width+12,h:r.height+12}; }
+  if(rc){ rg.style.cssText='display:block;left:'+rc.x+'px;top:'+rc.y+'px;width:'+rc.w+'px;height:'+rc.h+'px'; } else rg.style.display='none';
+  if(s.soft){ tb.style.cssText='display:none'; }
+  else if(rc){ const x=rc.x,y=rc.y,w=rc.w,h=rc.h; tb.style.cssText='display:block;clip-path:polygon(evenodd,0 0,0 '+Ht+'px,'+Wd+'px '+Ht+'px,'+Wd+'px 0,0 0,'+x+'px '+y+'px,'+(x+w)+'px '+y+'px,'+(x+w)+'px '+(y+h)+'px,'+x+'px '+(y+h)+'px,'+x+'px '+y+'px)'; }
+  else tb.style.cssText='display:block;clip-path:none';
+  /* bubble goes on the side away from the target */
+  const bw=Math.min(300,Wd*.42); bub.style.width=bw+'px'; const cx=rc?rc.x+rc.w/2:Wd/2;
+  if(s.top){ bub.style.cssText+=';width:'+bw+'px;left:'+(Wd/2-bw/2)+'px;top:8px;bottom:auto'; }
+  else if(!rc){ bub.style.cssText+=';width:'+bw+'px;left:'+(Wd/2-bw/2)+'px;top:'+Math.max(10,Ht/2-70)+'px;bottom:auto'; }
+  else { const left=cx>Wd/2?14:Wd-bw-14; let top=Math.min(Ht-150,Math.max(10,rc.y+rc.h/2-60)); if(rc.y>Ht*.55) top=Math.max(10,Ht*.18); bub.style.cssText+=';width:'+bw+'px;left:'+left+'px;top:'+top+'px;bottom:auto'; }
+}
+document.addEventListener('click',function(e){ if(!TUT.L) return; const s=TSTEPS[TUT.i]; if(s&&s.click&&s.sel&&e.target.closest(s.sel)) setTimeout(()=>{ if(TSTEPS[TUT.i]===s) tutGo(TUT.i+1); },60); },true);
+function tutBoot(){ if(save.tut==='done') return; if(save.tut===undefined){ if(save.best>0||save.floor>1||(save.pulls||0)>0&&save.roster.length>8){ save.tut='done'; persist(); return; } save.tut=0; }
+  tutMake(); tutGo(Math.min(+save.tut||0,9)); TUT.tm=setInterval(tutTick,150); tutTick(); }
+if(window.__dbg) window.__dbg.TUT=TUT;
+if(window.__dbg) window.__dbg.tutGo=tutGo;
+{ const _ho=hintOnce; hintOnce=function(k,m){ if(TUT.L) return; return _ho(k,m); }; }
 })();</script></body></html>
