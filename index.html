@@ -399,6 +399,30 @@ button:active:not(:disabled){transform:scale(.93)}
 .gt{width:100%;border-collapse:collapse;margin:4px 0}.gt td,.gt th{padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.1);vertical-align:top}.gt th{font:400 12px var(--display);color:#bfb2f0;text-align:left}
 .gbody ul{margin:4px 0;padding-left:18px}#gsave{width:100%;height:46px;border-radius:10px;background:#1d1438;color:#fff;border:2px solid #4a3a86;font:11px monospace;margin-top:6px}
 .pzp{max-height:96%;overflow:auto}.pzgrid{max-width:min(230px,44vh)}.pzgrid.path{max-width:min(190px,36vh)}.rune{height:min(54px,11vh)}
+
+#intro{position:absolute;inset:0;z-index:90;background:#0d0820;overflow:hidden;cursor:pointer;transition:opacity .5s}
+#intro.out{opacity:0;pointer-events:none}
+#ilogo{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;animation:ilg 2.6s ease both}
+#ilogo svg{filter:drop-shadow(0 0 18px rgba(255,140,60,.6));max-height:36vh;width:auto;animation:ipop 1.2s ease both}
+#ilogo b{font:400 clamp(26px,7vh,44px) var(--display);color:#ffe9b0;letter-spacing:.18em;margin-top:6px}
+#ilogo span{font:400 clamp(12px,3.4vh,18px) var(--display);color:var(--mist);letter-spacing:.5em}
+@keyframes ilg{0%{opacity:0}22%,72%{opacity:1}100%{opacity:0}}
+@keyframes ipop{0%{transform:scale(.7)}100%{transform:scale(1)}}
+#ititle{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 85%,#5b2a78 0,#2a1655 45%,#0d0820 85%);animation:ifade .9s ease both}
+@keyframes ifade{from{opacity:0}to{opacity:1}}
+#istars{position:absolute;inset:0}
+#istars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.2;animation:itw 2.4s ease-in-out infinite}
+#istars i.em{background:#ff9a4a;width:4px;height:4px;box-shadow:0 0 6px #ff7a2a;animation:iem 5s linear infinite}
+@keyframes itw{50%{opacity:1}}
+@keyframes iem{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(-45vh) translateX(14px);opacity:0}}
+#itower{position:absolute;right:8%;bottom:0;height:88%;width:auto;filter:drop-shadow(0 0 20px rgba(255,120,60,.3))}
+#itx{position:absolute;left:9%;top:50%;transform:translateY(-58%)}
+#itx .ik{font:400 clamp(11px,3.2vh,16px) var(--display);color:var(--teal);letter-spacing:.4em;margin-bottom:6px}
+#itx h1{margin:0;font:400 clamp(40px,15vh,92px)/.95 var(--display);color:var(--gold);text-shadow:0 4px 0 #6a2a00,0 8px 0 var(--ink),0 0 30px rgba(255,170,60,.5);animation:ibob 3s ease-in-out infinite}
+@keyframes ibob{50%{transform:translateY(-5px)}}
+#itap{position:absolute;left:9%;bottom:12%;font:400 clamp(16px,4.4vh,24px) var(--display);color:#fff;letter-spacing:.12em;animation:ibl 1.4s ease-in-out infinite;text-shadow:0 2px 0 var(--ink)}
+@keyframes ibl{50%{opacity:.25}}
+#ico{position:absolute;left:0;right:0;bottom:3%;text-align:center;font:600 11px var(--body);color:rgba(195,181,234,.5)}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -407,6 +431,8 @@ button:active:not(:disabled){transform:scale(.93)}
 <div id="sheet"><nav id="tabs"></nav><div id="pane"><div id="ph"><b id="pt"></b><span id="ps"></span></div><div id="body"></div><div id="foot"><div id="pstrip"></div><button class="primary" id="go">Go!</button></div></div></div>
 <div id="bhud" hidden><div id="btop"><div id="fl"><div id="dn"></div><div id="pips"></div><div class="pill sm" style="align-self:flex-start"><span class="coin"></span><span id="rg">0</span></div></div><div id="bctl"><button class="tg" id="auto">Auto</button><button class="tg" id="spd">1x</button></div></div><div id="bbot"></div></div>
 <div id="modal" class="ov" hidden></div><div id="toast" hidden></div><div id="hint" hidden></div>
+<div id="intro"><div id="ilogo"><svg viewBox="0 0 120 120" width="120" height="120"><defs><linearGradient id="ig" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffcf4a"/><stop offset="1" stop-color="#ff6a3d"/></linearGradient></defs><path d="M60 8 L108 26 V62 C108 88 86 106 60 114 C34 106 12 88 12 62 V26 Z" fill="#2a1a52" stroke="url(#ig)" stroke-width="6"/><path d="M60 30 C70 46 82 52 80 70 C78 86 68 92 60 92 C52 92 42 86 40 70 C38 56 50 50 52 38 C56 44 58 46 60 30Z" fill="url(#ig)"/><path d="M60 58 C65 66 70 70 68 78 C66 84 62 86 60 86 C58 86 54 84 52 78 C50 70 56 66 60 58Z" fill="#fff2b8"/></svg><b>EMBERGATE</b><span>GAMES</span></div>
+<div id="ititle" hidden><div id="istars"></div><svg id="itower" viewBox="0 0 200 300" preserveAspectRatio="xMidYMax meet"><path d="M82 300 V120 L74 118 V96 H82 V84 L100 20 L118 84 V96 H126 V118 L118 120 V300Z M60 300 V210 H82 V300Z M118 300 V190 H140 V300Z" fill="#120a24"/><rect x="96" y="150" width="8" height="16" rx="3" fill="#ffcf4a"/><rect x="96" y="200" width="8" height="16" rx="3" fill="#ffcf4a" opacity=".7"/><rect x="96" y="100" width="8" height="12" rx="3" fill="#ff8a4a"/></svg><div id="itx"><div class="ik">MASTER OF THE</div><h1>SPIRE<br>MASTER</h1></div><div id="itap">Tap to start</div><div id="ico">&copy; Embergate Games</div></div></div>
 <div id="rot"><i></i>Rotate your phone<div style="font:400 16px var(--body);color:#c0cbdc">Spire Master is played in landscape</div></div>
 </div>
 <script>
@@ -2747,4 +2773,14 @@ if(!resolveAbandoned()){ const v=volunteers(); if(v){ renderSheet(); setTimeout(
 if(!save.hint.start) setTimeout(()=>hintOnce('start','Welcome, Master! Summon heroes, set your team of 5 (front row tanks, back row damage), and climb the Spire. Heroes who fall are gone forever. You start with crystals for a 10x summon!'),500);
 window.__dbg={PZ:PZ,openGuide:openGuide,wavesFor:wavesFor,AN:AN,showSummon:(l)=>showSummon(l),newHero:newHero,gainExp:gainExp,ascend:ascend,setCaptain:setCaptain,swapSlots:swapSlots,S:S,save:()=>save,startStage:startStage,summon:summon,heroStats:heroStats,teamHeroes:teamHeroes,stageEnd:stageEnd,openHero:openHero,useMaster:useMaster,retreat:retreat,promote:promote,train:train};
 requestAnimationFrame(frame);
+/* ===== intro / title screen ===== */
+(function(){ const I=$('intro'); if(!I) return; const st=$('istars');
+  for(let i=0;i<46;i++){ const e=document.createElement('i'); e.style.left=Math.random()*100+'%'; e.style.top=Math.random()*70+'%'; e.style.animationDelay=(Math.random()*2.4)+'s'; st.appendChild(e); }
+  for(let i=0;i<14;i++){ const e=document.createElement('i'); e.className='em'; e.style.left=(55+Math.random()*40)+'%'; e.style.top=(60+Math.random()*38)+'%'; e.style.animationDelay=(Math.random()*5)+'s'; st.appendChild(e); }
+  let phase=0, tm=0;
+  function title(){ if(phase>0) return; phase=1; clearTimeout(tm); $('ilogo').hidden=true; $('ititle').hidden=false; }
+  function start(){ if(phase===0){ title(); return; } if(phase!==1) return; phase=2; try{ audioInit(); sfx('win'); }catch(e){} I.classList.add('out'); setTimeout(()=>{ I.remove(); },600); }
+  tm=setTimeout(title,2600);
+  I.addEventListener('pointerdown',start);
+})();
 })();</script></body></html>
