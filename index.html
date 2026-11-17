@@ -381,6 +381,24 @@ button:active:not(:disabled){transform:scale(.93)}
 .sr.s4::after,.sr.s5::after,.sr.s6::after{content:'';position:absolute;top:-50%;left:-60%;width:40%;height:200%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(20deg);animation:shine 1.6s 1s ease-in-out infinite}
 @keyframes shine{0%{left:-60%}60%,100%{left:130%}}.sr.s5{animation:flipIn .55s cubic-bezier(.2,1.3,.4,1) both,glowP 1.4s 1s ease-in-out infinite}
 @keyframes glowP{50%{box-shadow:0 0 26px var(--rc),0 0 6px #fff}}
+/* ---------- puzzles, guide ---------- */
+#helpb{right:83px;font:400 18px var(--display);color:#ffe8a0}#ph{padding-right:128px}
+.msk{width:84px;height:44px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}.msk small{position:relative;z-index:1;font:800 8px var(--body);color:#5a3200;padding:0 3px}
+.wv i.p{width:14px;background:#7fe3ff;border-radius:50%}
+.ov.pz{background:rgba(6,2,18,.45)}.pzp{width:min(440px,94%);text-align:center}.pzh{display:flex;justify-content:space-between;align-items:baseline}.pzh b{font:400 22px var(--display);color:#7fe3ff}.pzh span{font:400 18px var(--display);color:#fff}
+.pzbar{height:8px;border-radius:4px;background:rgba(0,0,0,.4);overflow:hidden;margin:4px 0}.pzbar i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#7fe3ff,#7dffb0);transition:width .1s linear}.pzbar i.hot{background:#ff6a7a;animation:hot .4s infinite alternate}@keyframes hot{to{opacity:.5}}
+.pzhow{font-size:12px;color:#d9ceff;margin:4px 0 8px}.pzmsg{min-height:18px;font:400 14px var(--display);color:#ffe8a0;margin:6px 0 0}.pzmsg.ok{color:#7dffb0}.pzmsg.bad{color:#ff8a9a}
+.pzrunes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:300px;margin:0 auto}
+.rune{height:54px;border-radius:14px;border:3px solid #1d1230;background:#2a2056;color:var(--rc);font:400 26px var(--display);box-shadow:0 4px 0 #120a26}
+.rune.lit{background:var(--rc);color:#1d1230;box-shadow:0 0 22px var(--rc),0 4px 0 #120a26;transform:scale(1.06)}.rune:disabled{opacity:.85}
+.pzgrid{display:grid;gap:6px;max-width:260px;margin:0 auto}
+.braz{aspect-ratio:1;border-radius:10px;border:2px solid #1d1230;background:#2a2056;font-size:22px;padding:0}.braz.fire{background:radial-gradient(circle at 50% 70%,#ffb35a,#c0402a 70%);box-shadow:0 0 12px #ff8a3a}
+.pzgrid.path{max-width:200px;gap:4px}.tile2{aspect-ratio:1;border-radius:7px;border:2px solid #1d1230;background:#3a2e70;padding:0}.tile2.safe{background:#7dffb0;box-shadow:0 0 12px #7dffb0}.tile2.step{background:#7fe3ff}.tile2.boom{background:#ff4a5a;animation:bump .4s}.tile2.reveal{background:rgba(125,255,176,.4)}
+.pzwin{animation:bump .5s}.pzlose{animation:shakeX .4s}@keyframes shakeX{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.guide{width:min(600px,96%);max-height:94%;display:flex;flex-direction:column}.gtabs{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;margin:4px 0 6px}.gbody{overflow:auto;text-align:left;font-size:12.5px;color:#e8defc;line-height:1.4;padding:0 4px}
+.gt{width:100%;border-collapse:collapse;margin:4px 0}.gt td,.gt th{padding:4px 6px;border-bottom:1px solid rgba(255,255,255,.1);vertical-align:top}.gt th{font:400 12px var(--display);color:#bfb2f0;text-align:left}
+.gbody ul{margin:4px 0;padding-left:18px}#gsave{width:100%;height:46px;border-radius:10px;background:#1d1438;color:#fff;border:2px solid #4a3a86;font:11px monospace;margin-top:6px}
+.pzp{max-height:96%;overflow:auto}.pzgrid{max-width:min(230px,44vh)}.pzgrid.path{max-width:min(190px,36vh)}.rune{height:min(54px,11vh)}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -404,7 +422,7 @@ function cloudPush(){ if(!cloud.ref) return; cloud.dirty=true; if(cloud.timer||c
 async function cloudFlush(){ cloud.timer=0; if(!cloud.ref||cloud.busy||!cloud.dirty) return; cloud.busy=true; cloud.dirty=false;
   try{ await cloud.ref.set({v:1,ts:save.ts||Date.now(),s:JSON.parse(JSON.stringify(save))}); }catch(e){ cloud.dirty=true; }
   cloud.busy=false; if(cloud.dirty&&!cloud.timer) cloud.timer=setTimeout(cloudFlush,8000); }
-function persist(){ save.ts=Date.now(); try{ localStorage.setItem(KEY,JSON.stringify(save)); }catch(e){} cloudPush(); }
+function persist(){ save.ts=Date.now(); save.ver=2; try{ const j=JSON.stringify(save); localStorage.setItem(KEY,j); localStorage.setItem(KEY+'.bak',j); }catch(e){} cloudPush(); }
 function toast(msg,col){ const el=$('toast'); el.innerHTML=msg; el.style.color=col||'#fff'; el.hidden=false; el.style.animation='none'; void el.offsetWidth; el.style.animation=''; clearTimeout(toast.t); toast.t=setTimeout(()=>{ el.hidden=true; },2800); }
 /* ---------- audio ---------- */
 const AUD={ctx:null,sfx:null,mus:null};
@@ -1804,7 +1822,7 @@ let save=freshSave();
 function starterRoster(){ const mk=(st,c)=>{ const h=newHero(st,c); save.roster.push(h); return h; }; const k=mk(2,'knight'), c=mk(1,'cleric'), a=mk(1,'archer'), w=mk(1,'wizard'); save.team=[k.id,null,c.id,a.id,w.id];
   save.gear.push(mkGear('w',2,1)); save.gear.push(mkGear('a',1,1)); }
 function migrate(s){ s=Object.assign(freshSave(),s); if(!Array.isArray(s.team)||s.team.length!==5) s.team=[null,null,null,null,null]; s.roster.forEach(h=>{ h.gear=h.gear||{}; h.q=h.q||[]; syncRar(h); }); return s; }
-try{ const s=JSON.parse(localStorage.getItem(KEY)||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)) save=migrate(s); }catch(e){}
+try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)) save=migrate(s); }catch(e){}
 if(!save.roster.length&&!save.stat.started){ save.stat.started=1; starterRoster(); }
 usedNames=()=>save.roster.map(h=>h.name.split(' ')[0]);
 function adopt(s){ save=migrate(s); }
@@ -1840,7 +1858,7 @@ function stageExp(f,k){ return Math.round((40+14*f)*(k==='boss'?3:k==='mini'?1.8
 function firstCry(f,k){ return k==='boss'?150:k==='mini'?60:30; }
 function stageKind(f){ return f%10===0?'boss':f%5===0?'mini':'fight'; }
 /* ===== Spire Master : stages, formation battles, lobby, loop ===== */
-const ESM={h0:115,a0:3.42,c:4,b:1.12,k:.19};
+const ESM={h0:121,a0:3.5,c:4,b:1.12,k:.19};
 function enemyF(f){ return ESM.k*Math.pow(f+ESM.c,ESM.b)*(1.9+.004*f+.003*Math.max(0,f-60)); }
 function baseEnemyStats(d,f,kind){ const F=enemyF(f), m={norm:[1,1,1],elite:[1.9,1.3,1],mini:[3.6,1.35,.95],boss:[6.5,1.45,.85]}[kind]; return {hp:Math.round(ESM.h0*F*m[0]),atk:+(ESM.a0*F*m[1]).toFixed(1),spd:m[2]}; }
 const RANGED={bat:1,bird:1,sprite:1,oracle:1,wyrm:1,cloud:1,crystal:1};
@@ -1852,7 +1870,7 @@ function makeEnemies(d,f,kind){
   else if(kind==='mini'){ add(miniFor(d,f),'mini',1); add(pick(D.mon),'norm',.8); add(pick(D.mon),'norm',.8); }
   else { const n=f<=3?3:ri(3,4); const m0=pick(D.mon); for(let i=0;i<n;i++) add(rnd()<.6?m0:pick(D.mon),(f>12&&i===0&&rnd()<Math.min(.35,f/150))?'elite':'norm',n===4?.8:.95); }
   const pa=f<8?0:Math.min(.6,(f-6)*.01), na=f>=40?2:1;
-  for(const e of out){ if(e.boss){ if(f>=50) giveAffix(e,1); } else if(e.mini){ if(f>=25) giveAffix(e,1); } else if(e.elite) giveAffix(e,na); else if(rnd()<pa) giveAffix(e,1); }
+  for(const e of out){ if(e.boss){ if(f>=60) giveAffix(e,1); } else if(e.mini){ if(f>=25) giveAffix(e,1); } else if(e.elite) giveAffix(e,na); else if(rnd()<pa) giveAffix(e,1); }
   return out;
 }
 /* rows: enemies without range must hit the front row first; ranged heroes in front take more, melee heroes in back hit less */
@@ -2085,7 +2103,7 @@ function captain(){ const id=save.captain; return id&&save.team.indexOf(id)>=0?h
 function setCaptain(id){ save.captain=save.captain===id?null:id; persist(); }
 /* ---------- waves ---------- */
 const WAVEM={hp:.5,atk:.8,last:.7};
-function wavesFor(f){ const n=f<15?3:f<40?4:5, k=stageKind(f), w=[]; for(let i=0;i<n-1;i++) w.push(i===n-2&&f>12&&Math.random()<.4?'elite':'fight'); w.push(k); return w; }
+function wavesFor(f){ const n=f<15?4:f<40?5:6, k=stageKind(f), w=[]; for(let i=0;i<n-1;i++) w.push(i===n-2&&f>12&&Math.random()<.4?'elite':'fight'); w.push(k); return w; }
 let WAVE_HP=1, WAVE_ATK=1;
 function enemyStats(d,f,kind){ const s=baseEnemyStats(d,f,kind); return {hp:Math.round(s.hp*WAVE_HP),atk:+(s.atk*WAVE_ATK).toFixed(1),spd:s.spd}; }
 function waveScale(R){ const last=R.wi===R.waves.length-1, k=R.waves[R.wi]; if(k==='boss'||k==='mini'){ WAVE_HP=1; WAVE_ATK=1; } else if(last){ WAVE_HP=WAVEM.last; WAVE_ATK=WAVEM.atk; } else { WAVE_HP=WAVEM.hp; WAVE_ATK=WAVEM.atk; } }
@@ -2102,7 +2120,7 @@ function startStage(f){
   if(!R.replay&&f%10===1) regionBanner(R); else banner('Floor '+f,R.waves.length+' waves'+(kind==='boss'?' · boss at the end':kind==='mini'?' · mini boss at the end':''),DUN[d].acc,1500);
 }
 function updBtop(){ const R=S.run; if(!R) return; $('dn').textContent=DUN[R.d].n+(R.replay?' · Replay':''); const k=stageKind(R.floor);
-  $('pips').innerHTML='<div class="fb"><b>Floor '+R.floor+'</b><span>Wave '+(R.wi+1)+'/'+R.waves.length+(k==='boss'?' · boss floor':k==='mini'?' · mini boss':'')+'</span></div><div class="wv">'+R.waves.map((w,i)=>'<i class="'+(i<R.wi?'done':i===R.wi?'cur':'')+(w==='boss'?' b':w==='mini'?' m':'')+'"></i>').join('')+'</div>';
+  $('pips').innerHTML='<div class="fb"><b>Floor '+R.floor+'</b><span>Wave '+(R.wi+1)+'/'+R.waves.length+(k==='boss'?' · boss floor':k==='mini'?' · mini boss':'')+'</span></div><div class="wv">'+R.waves.map((w,i)=>'<i class="'+(i<R.wi?'done':i===R.wi?'cur':'')+(w==='boss'?' b':w==='mini'?' m':w==='puzzle'?' p':'')+'"></i>').join('')+'</div>';
   $('rg').textContent=fmt(R.gold||0); $('auto').classList.toggle('on',!!save.auto); $('auto').textContent='Auto '+(save.auto?'ON':'OFF'); $('spd').textContent=save.speed+'x'; }
 function finishFight(b){
   const R=S.run; R.potions=b.potions; S.over=1;
@@ -2232,7 +2250,7 @@ function resolveAbandoned(){
   if(cap){ const C=CAPT[cap.cls], v=captVal(cap); if(C.m==='hp'||C.m==='atk'||C.m==='spd') R.mult[C.m]*=1+v; else R.mult[C.m]=(R.mult[C.m]||0)+v; }
   team.forEach((h,i)=>{ if(!h) return; const u=heroUnit(h); u.slot=i; u.row=i<2?'f':'b'; refreshUnit(u,R.mult); u.hp=u.max; u.mor=moodOf(h); u.st={dmg:0,taken:0,heal:0,kills:0,casts:0}; u.cap=cap&&h===cap; R.units.push(u); });
   R.log.push({f:f,t:'You left mid-floor, so the team fought on without orders.'}); let win=true;
-  for(R.wi=0;R.wi<R.waves.length;R.wi++){ const k=R.waves[R.wi]; waveScale(R); const al=R.units.filter(u=>u.alive); if(!al.length){ win=false; break; }
+  for(R.wi=0;R.wi<R.waves.length;R.wi++){ const k=R.waves[R.wi]; if(k==='puzzle'){ for(const u of R.units) if(u.alive) u.hp=Math.max(1,u.hp-Math.round(u.max*.22)); R.log.push({f:f,t:'Nobody solved the puzzle room, so the trap went off.'}); continue; } waveScale(R); const al=R.units.filter(u=>u.alive); if(!al.length){ win=false; break; }
     if(R.wi){ const hp=(k==='boss'||k==='mini')?.25:.12; for(const u of al) u.hp=Math.min(u.max,u.hp+Math.round(u.max*hp)); }
     for(const u of al){ u.shield=0; u.buff=0; u.atb=Math.random()*.5; u.cd=u.cdMax*.4; u.hiding=0; }
     const E=makeEnemies(R.d,f,k), b=new Battle(al,E,R.potions); b.auto=true; b.mkMinion=()=>{ const m=makeEnemies(R.d,f,'fight')[0]; m.max=m.hp=Math.round(m.max*.6); return m; };
@@ -2627,6 +2645,92 @@ openHero=function(id){ const h=heroById(id), pre=AN.snap[id]; _anOH(id); if(!h) 
   if(pre&&(now.l>pre.l||now.s>pre.s||now.a>pre.a)){ const st=$('modal').querySelector('.stats'), pc=$('ipc'); if(st){ st.classList.add('lvpulse'); } if(pc){ const r=pc.getBoundingClientRect(), ar=APP.getBoundingClientRect(); anConfetti(r.left-ar.left+r.width/2,r.top-ar.top+r.height/2,now.s>pre.s||now.a>pre.a?40:22,now.s>pre.s?[STARC[h.star],'#fff','#ffe27a']:['#7dffb0','#fff','#ffe27a']); pc.classList.add('lvglow'); } } };
 document.addEventListener('click',function(e){ const t=e.target.closest('[data-act="enh"],[data-act="geq"],[data-act="place"],[data-act="autofill"]'); if(!t) return; const ar=APP.getBoundingClientRect(); anConfetti(e.clientX-ar.left,e.clientY-ar.top,t.getAttribute('data-act')==='enh'?16:8,['#ffe27a','#fff','#c9a6ff']); });
 function anLobHop(i){ const ph=(S.t+i*1.37)%5.2; return ph<.4?-Math.sin(ph/.4*Math.PI)*9:0; }
+/* ===== puzzle rooms, guide, save safety ===== */
+const PZ={on:null};
+const PZTYPE=['runes','braziers','path'];
+const _pzWaves=wavesFor;
+wavesFor=function(f){ const w=_pzWaves(f); if(f>=3&&(f%10===3||f%10===7)){ w.splice(Math.max(1,Math.floor((w.length-1)/2)),0,'puzzle'); } return w; };
+const _pzBF=beginFight;
+beginFight=function(kind){ if(kind==='puzzle') return pzStart(); return _pzBF(kind); };
+function pzStart(){
+  const R=S.run, f=R.floor, type=PZTYPE[(f*7+Math.floor(f/10))%3];
+  S.battle=null; S.walkT=1; $('bbot').hidden=true; if($('mbar')) $('mbar').hidden=true; updBtop();
+  banner('PUZZLE ROOM',{runes:'Rune Lock',braziers:'Braziers',path:'Hidden Path'}[type],'#7fe3ff',1300);
+  setTimeout(()=>{ if(S.run!==R) return; ({runes:pzRunes,braziers:pzBraziers,path:pzPath})[type](R,f); },1300);
+}
+function pzShell(title,how,limit){ const m=$('modal'); m.hidden=false; m.className='ov pz';
+  m.innerHTML='<div class="panel pzp"><div class="pzh"><b>'+title+'</b><span id="pzt"></span></div><div class="pzbar"><i id="pzbar"></i></div><p class="pzhow">'+how+'</p><div id="pzb"></div><p class="pzmsg" id="pzmsg"></p></div>';
+  PZ.on={limit:limit,left:limit,run:false,done:false}; return $('pzb'); }
+function pzClock(go){ const P=PZ.on; P.run=go; if(!go) return; let last=performance.now();
+  const tick=now=>{ if(!PZ.on||PZ.on!==P||P.done) return; P.left-=(now-last)/1000; last=now; const bar=$('pzbar'), tt=$('pzt'); if(bar) bar.style.width=Math.max(0,P.left/P.limit*100)+'%'; if(tt) tt.textContent=Math.max(0,P.left).toFixed(1)+'s';
+    if(bar) bar.classList.toggle('hot',P.left<P.limit*.25); if(P.left<=0){ pzEnd(false,'Time ran out!'); return; } requestAnimationFrame(tick); }; requestAnimationFrame(tick); }
+function pzEnd(ok,msg){ const P=PZ.on; if(!P||P.done) return; P.done=true; const R=S.run, f=R.floor, mm=$('pzmsg'); if(mm){ mm.textContent=msg; mm.className='pzmsg '+(ok?'ok':'bad'); }
+  const pan=document.querySelector('.pzp'); if(pan) pan.classList.add(ok?'pzwin':'pzlose'); sfx(ok?'win':'lose');
+  let note;
+  if(ok){ const g=Math.round(stageGold(f,'mini')*.6); R.gold+=g; let extra=''; if(Math.random()<.45&&save.gear.length<120){ const gg=mkGear(pick(['w','a','c']),rollGearRar(f,false),f); save.gear.push(gg); extra=' and '+gearName(gg); } else { save.stones=(save.stones||0)+1; extra=' and 1 ascension stone'; }
+    for(const u of R.units) if(u.alive){ u.hp=Math.min(u.max,u.hp+Math.round(u.max*.15)); morAdj(u,8); } note='Solved! +'+fmt(g)+' gold'+extra+'. The team rests a little (+15% health).'; R.log.push({f:f,t:'Solved the puzzle room.'}); persist(); }
+  else { for(const u of R.units) if(u.alive){ u.hp=Math.max(1,u.hp-Math.round(u.max*.22)); morAdj(u,-10); } note='The trap springs! Every hero loses 22% health.'; R.log.push({f:f,t:'Failed the puzzle room and sprang a trap.'}); FX.shake=.5; flash('255,60,80',.35); }
+  setTimeout(()=>{ if(S.run!==R) return; toast(note,ok?'#7dffb0':'#ff9aa8'); closeModal(); PZ.on=null; if(R.wi<R.waves.length-1){ R.wi++; waveScale(R); beginFight(R.waves[R.wi]); } else stageEnd(true); },1300); }
+/* --- Rune Lock: watch the sequence, repeat it --- */
+function pzRunes(R,f){ const L=Math.min(8,3+Math.floor(f/15)), seq=[], sym=['◆','●','▲','■','★','✚'], col=['#ff6a7a','#ffd45a','#7dffb0','#7fe3ff','#c9a6ff','#ffb35a'];
+  for(let i=0;i<L;i++) seq.push(Math.floor(Math.random()*6));
+  const b=pzShell('Rune Lock','Watch the runes light up, then tap them in the same order.',L*1.6+3); b.className='pzrunes';
+  b.innerHTML=sym.map((s,i)=>'<button class="rune" data-r="'+i+'" style="--rc:'+col[i]+'" disabled>'+s+'</button>').join('');
+  const btn=[...b.querySelectorAll('.rune')], gap=f>=40?420:560; let k=0;
+  $('pzmsg').textContent='Watch carefully…';
+  seq.forEach((r,i)=>setTimeout(()=>{ if(!PZ.on||PZ.on.done) return; btn[r].classList.add('lit'); sfx('tap'); setTimeout(()=>btn[r].classList.remove('lit'),gap*.65); },500+i*gap));
+  setTimeout(()=>{ if(!PZ.on||PZ.on.done) return; btn.forEach(x=>x.disabled=false); $('pzmsg').textContent='Your turn! '+L+' runes'; pzClock(true); },500+L*gap);
+  btn.forEach(x=>x.addEventListener('click',()=>{ const P=PZ.on; if(!P||P.done) return; const r=+x.getAttribute('data-r'); x.classList.add('lit'); setTimeout(()=>x.classList.remove('lit'),180);
+    if(r!==seq[k]){ pzEnd(false,'Wrong rune!'); return; } k++; sfx('coin'); $('pzmsg').textContent=k+' / '+L; if(k>=L) pzEnd(true,'The lock opens!'); })); }
+/* --- Braziers: lights-out --- */
+function pzBraziers(R,f){ const n=f>=50?4:3, presses=Math.min(n*n-1,3+Math.floor(f/20)), on=new Array(n*n).fill(false), idx=[...Array(n*n).keys()].sort(()=>Math.random()-.5).slice(0,presses);
+  const flip=i=>{ const x=i%n, y=Math.floor(i/n); for(const [dx,dy] of [[0,0],[1,0],[-1,0],[0,1],[0,-1]]){ const X=x+dx, Y=y+dy; if(X>=0&&Y>=0&&X<n&&Y<n) on[Y*n+X]=!on[Y*n+X]; } };
+  idx.forEach(flip);
+  const b=pzShell('The Braziers','Put out every fire. Tapping a brazier flips it and its neighbours (up, down, left, right).',n===4?40:24); b.className='pzgrid'; b.style.gridTemplateColumns='repeat('+n+',1fr)';
+  let moves=0; const draw=()=>{ b.innerHTML=on.map((v,i)=>'<button class="braz'+(v?' fire':'')+'" data-i="'+i+'">'+(v?'🔥':'')+'</button>').join(''); b.querySelectorAll('.braz').forEach(x=>x.addEventListener('click',()=>{ if(!PZ.on||PZ.on.done) return; flip(+x.getAttribute('data-i')); moves++; sfx('tap'); draw(); $('pzmsg').textContent=on.filter(Boolean).length+' fires left · '+moves+' moves'; if(!on.some(Boolean)) pzEnd(true,'All fires out!'); })); };
+  draw(); $('pzmsg').textContent=on.filter(Boolean).length+' fires left'; pzClock(true); }
+/* --- Hidden Path: memorise the safe tiles --- */
+function pzPath(R,f){ const C=4, Rw=5, path=[]; let c=Math.floor(Math.random()*C);
+  for(let r=Rw-1;r>=0;r--){ path.push(r*C+c); if(r>0&&Math.random()<.65){ const nc=Math.max(0,Math.min(C-1,c+(Math.random()<.5?-1:1)*(1+Math.floor(Math.random()*2)))); const st=nc>c?1:-1; while(c!==nc){ c+=st; path.push(r*C+c); } } }
+  const show=Math.max(1.4,3-f/50);
+  const b=pzShell('Hidden Path','Memorise the safe tiles, then cross from the bottom to the top. One wrong step springs the trap.',12+path.length*.6); b.className='pzgrid path'; b.style.gridTemplateColumns='repeat('+C+',1fr)';
+  b.innerHTML=[...Array(C*Rw).keys()].map(i=>'<button class="tile2'+(path.indexOf(i)>=0?' safe':'')+'" data-i="'+i+'" disabled></button>').join('');
+  const tiles=[...b.querySelectorAll('.tile2')]; let k=0; $('pzmsg').textContent='Memorise the glowing path…';
+  setTimeout(()=>{ if(!PZ.on||PZ.on.done) return; tiles.forEach(x=>{ x.classList.remove('safe'); x.disabled=false; }); $('pzmsg').textContent='Go! Start on the bottom row.'; pzClock(true); },show*1000);
+  tiles.forEach(x=>x.addEventListener('click',()=>{ if(!PZ.on||PZ.on.done) return; const i=+x.getAttribute('data-i'); if(x.classList.contains('step')) return;
+    if(i!==path[k]){ x.classList.add('boom'); tiles.forEach(t=>{ if(path.indexOf(+t.getAttribute('data-i'))>=0&&!t.classList.contains('step')) t.classList.add('reveal'); }); pzEnd(false,'Wrong tile!'); return; }
+    x.classList.add('step'); k++; sfx('coin'); if(k>=path.length) pzEnd(true,'Safely across!'); })); }
+/* ---------- guide ---------- */
+function openGuide(sec){ sec=sec||S.gsec||'moods'; S.gsec=sec; const m=$('modal'); m.hidden=false; m.className='ov';
+  const tabs=[['moods','Moods'],['cmd','Commands'],['cur','Currencies'],['floors','Floors'],['save','Save']];
+  const body={
+    moods:'<p>Every hero has a mood from 0 to 100. It changes their stats in battle and shows as a coloured dot by their health bar.</p><table class="gt"><tr><th>Mood</th><th>When</th><th>Effect</th></tr>'+
+      '<tr><td style="color:#ffcf4a">Cocky</td><td>80+</td><td>+8% attack, −4% health</td></tr><tr><td style="color:#7dffb0">Happy</td><td>55–79</td><td>+4% attack, +4% speed</td></tr><tr><td style="color:#b9b3c9">Tired</td><td>30–54</td><td>−5% speed</td></tr><tr><td style="color:#ff8a9a">Scared</td><td>below 30</td><td>−10% attack, −4% speed, and a 30% chance to refuse your skill orders</td></tr></table>'+
+      '<p><b>Goes up:</b> winning floors (bosses most), killing bosses, solving puzzle rooms, Rally, captain bonuses (Cleric, Paladin, Druid).<br><b>Goes down:</b> a teammate dying (−22), the captain dying (−30 to everyone), losing, failing a puzzle.</p>',
+    cmd:'<p>The three gold buttons on the right side of the battle screen are your Master commands. Each has its own cooldown.</p><table class="gt"><tr><th>Command</th><th>What it does</th><th>Cooldown</th></tr>'+
+      '<tr><td><b>Rally</b></td><td>Heals every hero 20% of their max health, raises morale by 20, and pulls hiding heroes back into the fight.</td><td>24s</td></tr>'+
+      '<tr><td><b>Focus</b></td><td>The whole team targets the biggest threat (boss first, then mini boss, then the hardest hitter) and deals +50% damage to it for 6 seconds.</td><td>18s</td></tr>'+
+      '<tr><td><b>Guard</b></td><td>Your front row takes half damage for 6 seconds. Use it right when a boss winds up a big move.</td><td>22s</td></tr></table>',
+    cur:'<table class="gt"><tr><td><span class="coin"></span> <b>Gold</b></td><td>Training, promoting, ascending, enhancing gear. From every floor and puzzle room.</td></tr>'+
+      '<tr><td><i class="cry"></i> <b>Crystals</b></td><td>Summoning heroes. From first clears of floors and daily login.</td></tr>'+
+      '<tr><td><i class="shd"></i> <b>Soul shards</b></td><td>Promoting heroes to more stars. From releasing heroes you don\'t need.</td></tr>'+
+      '<tr><td><i class="stn"></i> <b>Ascension stones</b> (the orange gems)</td><td>Breaking a hero\'s level cap every 10 levels. From bosses (most), mini bosses, puzzle rooms and sometimes normal floors.</td></tr></table>',
+    floors:'<p>Each floor is a run of waves: 4 waves early, 5 from floor 15, 6 from floor 40. Every 5th floor ends with a mini boss and every 10th with a boss. Health carries over between waves (+12% heal between waves, +25% before a boss).</p>'+
+      '<p><b>Puzzle rooms</b> appear in the middle of floors ending in 3 and 7. They are timed:</p><ul><li><b>Rune Lock</b>: watch the runes light up, then repeat the order.</li><li><b>Braziers</b>: put out every fire; each tap flips that brazier and its neighbours.</li><li><b>Hidden Path</b>: memorise the glowing tiles, then cross bottom to top.</li></ul><p>Solve it for gold, gear or a stone and a small heal. Fail and a trap hits every hero for 22% health (it can\'t kill), so the fights after it get much harder.</p><p>There is no retreat. Closing the game mid-floor makes the team fight on without you.</p>',
+    save:'<p>Your progress saves automatically after every action and every few seconds, with a backup copy. Game updates never wipe it.</p><p>Each place you play keeps its <b>own</b> save: the Home Screen app and the copy inside Claude are separate. To move progress, copy your save code here and load it on the other one.</p><div class="btns"><button class="buy" data-act="gexp">Copy save code</button></div><textarea id="gsave" placeholder="Paste a save code here to load it"></textarea><div class="btns"><button class="ghost" data-act="gimp">Load save code</button></div><p id="gsmsg" class="pzmsg"></p>'
+  }[sec];
+  m.innerHTML='<div class="panel guide"><h2>Guide</h2><div class="gtabs">'+tabs.map(t=>'<button class="fchip'+(t[0]===sec?' on':'')+'" data-act="gsec" data-id="'+t[0]+'">'+t[1]+'</button>').join('')+'</div><div class="gbody">'+body+'</div><div class="btns"><button class="primary" data-act="mclose">Got it</button></div></div>'; }
+document.addEventListener('click',function(e){ const t=e.target.closest('[data-act]'); if(!t) return; const a=t.getAttribute('data-act');
+  if(a==='gsec') openGuide(t.getAttribute('data-id'));
+  else if(a==='gexp'){ persist(); const code=btoa(unescape(encodeURIComponent(JSON.stringify(save)))); const ta=$('gsave'); ta.value=code; ta.select(); let ok=false; try{ ok=document.execCommand('copy'); }catch(_){} if(navigator.clipboard) navigator.clipboard.writeText(code).then(()=>{ $('gsmsg').textContent='Save code copied!'; },()=>{}); $('gsmsg').textContent=ok?'Save code copied!':'Save code shown above. Select it and copy.'; }
+  else if(a==='gimp'){ const v=($('gsave').value||'').trim(); try{ const s=JSON.parse(decodeURIComponent(escape(atob(v)))); if(!s||!Array.isArray(s.roster)) throw 0; adopt(s); save.ts=Date.now(); persist(); renderSheet(); $('gsmsg').textContent='Save loaded!'; sfx('win'); } catch(_){ $('gsmsg').textContent='That code did not work. Check you copied all of it.'; sfx('no'); } } });
+{ const hb=document.createElement('button'); hb.className='ib'; hb.id='helpb'; hb.textContent='?'; hb.title='Guide'; hb.addEventListener('click',()=>{ sfx('tap'); openGuide(); }); $('pane').appendChild(hb); }
+for(const [k,d] of [['rally','Heal 20%, +morale'],['focus','All hit the boss +50%'],['guard','Front row half damage']]){ const s=MSK.find(x=>x.k===k); if(s) s.d=d; }
+const _pzBM=buildMaster;
+buildMaster=function(){ _pzBM(); const mb=$('mbar'); if(!mb) return; mb.querySelectorAll('.msk').forEach(el=>{ const s=MSK.find(x=>x.k===el.getAttribute('data-mk')); if(s&&!el.querySelector('small')){ const sm=document.createElement('small'); sm.textContent=s.d; el.appendChild(sm); } }); };
+/* ---------- save safety ---------- */
+setInterval(()=>{ if(!document.hidden) persist(); },8000);
+window.addEventListener('pagehide',()=>persist());
 /* ===== boot ===== */
 (async function cloudInit(){
   try{ const C=window.claude; if(!C||!C.use) return; const db=await C.use('db'), user=await C.use('user'); if(!db||!user) return; const id=await user.id(); if(!id) return;
@@ -2640,6 +2744,6 @@ updSnd(); showMode(); renderSheet();
 if(!resolveAbandoned()){ const v=volunteers(); if(v){ renderSheet(); setTimeout(()=>toast('A new band of recruits arrives at camp. Time to start over.','#7dffb0'),900); } }
 { const got=dailyLogin(); if(got) setTimeout(()=>toast('Daily reward: +'+got+' crystals, +200 gold','#c9a6ff'),600); }
 if(!save.hint.start) setTimeout(()=>hintOnce('start','Welcome, Master! Summon heroes, set your team of 5 (front row tanks, back row damage), and climb the Spire. Heroes who fall are gone forever. You start with crystals for a 10x summon!'),500);
-window.__dbg={AN:AN,showSummon:(l)=>showSummon(l),newHero:newHero,gainExp:gainExp,ascend:ascend,setCaptain:setCaptain,swapSlots:swapSlots,S:S,save:()=>save,startStage:startStage,summon:summon,heroStats:heroStats,teamHeroes:teamHeroes,stageEnd:stageEnd,openHero:openHero,useMaster:useMaster,retreat:retreat,promote:promote,train:train};
+window.__dbg={PZ:PZ,openGuide:openGuide,wavesFor:wavesFor,AN:AN,showSummon:(l)=>showSummon(l),newHero:newHero,gainExp:gainExp,ascend:ascend,setCaptain:setCaptain,swapSlots:swapSlots,S:S,save:()=>save,startStage:startStage,summon:summon,heroStats:heroStats,teamHeroes:teamHeroes,stageEnd:stageEnd,openHero:openHero,useMaster:useMaster,retreat:retreat,promote:promote,train:train};
 requestAnimationFrame(frame);
 })();</script></body></html>
