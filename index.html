@@ -438,10 +438,38 @@ html.rotd,html.rotd body{overflow:hidden}
 #tcf .panel{padding:16px 20px;text-align:center;max-width:300px}
 #tcf h3{margin:0 0 6px;font:400 22px var(--display);color:var(--gold)}#tcf p{margin:0 0 12px;color:var(--mist)}
 #tcf .row{display:flex;gap:10px;justify-content:center}
+/* ---- town ---- */
+#town{position:absolute;inset:0;z-index:2;overflow:hidden;background:#1b1040}
+.tsky{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,#8a4a8a 0,#4a2a7a 40%,#1b1040 85%)}
+.thill{position:absolute;left:-10%;right:-10%;bottom:30%;height:30%;background:#2a1f55;border-radius:50% 50% 0 0/100% 100% 0 0}
+.tground{position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(#3b5a3a,#25402e)}
+.tpath{position:absolute;left:30%;right:30%;bottom:0;height:26%;background:linear-gradient(#a08560,#7a6444);clip-path:polygon(34% 0,66% 0,100% 100%,0 100%);opacity:.9}
+.bld{position:absolute;width:15%;aspect-ratio:1;border:0;background:none;padding:0;cursor:pointer;color:#fff;-webkit-tap-highlight-color:transparent;transition:transform .12s}
+.bld.big{width:25%}
+.bld:active{transform:scale(.94)}
+.bld .bart{position:absolute;inset:0 0 18% 0;display:block}.bld .bart svg{width:100%;height:100%;display:block;filter:drop-shadow(0 4px 0 rgba(0,0,0,.25))}
+.bld.plot .bart{opacity:.85}
+.bld .bnm{position:absolute;left:50%;bottom:0;transform:translateX(-50%);white-space:nowrap;background:linear-gradient(#3b2d74,#231a48);border:2px solid #120a26;border-radius:10px;padding:2px 9px;font:400 clamp(11px,3.4vh,15px) var(--display);color:#fff;text-shadow:0 2px 0 #1d1230}
+.bld .bnm i{font-style:normal;color:var(--gold);margin-left:3px}
+.bld .bsub{position:absolute;left:50%;bottom:-17px;transform:translateX(-50%);white-space:nowrap;font:800 clamp(9px,2.6vh,11px) var(--body);color:var(--mist);text-shadow:0 1px 0 #000}
+.bld .nb{position:absolute;right:6%;top:2%;background:var(--red);border:2px solid #fff;border-radius:50%;width:20px;height:20px;display:grid;place-items:center;font:400 12px var(--display);animation:tpul 1.2s infinite}
+.tcap{position:absolute;left:0;right:0;bottom:1.5%;text-align:center;font:400 11px var(--display);color:rgba(255,255,255,.35);letter-spacing:.3em}
+#app.intown #top{right:0}
+.tab.back{max-height:56px;flex:none;min-height:54px}
+.bu{padding:6px 2px}.bu h3{margin:0 0 4px;font:400 20px var(--display);color:var(--gold)}.bu h3 small{color:var(--mist);font-size:13px}
+.bu .d{margin:0 0 8px;color:var(--mist);font:700 13px/1.35 var(--body)}
+.bef{background:rgba(0,0,0,.28);border:2px solid #3a2d6e;border-radius:10px;padding:7px 10px;margin-bottom:8px;font:700 13px/1.4 var(--body)}
+.bef b{display:block;color:var(--teal);font:400 12px var(--display);letter-spacing:.06em;margin-bottom:2px}
+.bef.nx{border-color:#6a5a2a}.bef.nx b{color:var(--gold)}
+.blk{padding:8px;text-align:center;color:#ff9aa8;font:800 13px var(--body);background:rgba(255,90,106,.1);border-radius:10px}
+.bmax{padding:8px;text-align:center;color:#7dffb0;font:400 16px var(--display)}
+.bm{max-width:300px;text-align:center;padding:14px 16px}.bm .bmart{position:relative;width:90px;height:90px;margin:0 auto 4px}
+.bm .ghost{margin-top:8px}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
 <canvas id="c"></canvas><canvas id="c2"></canvas>
+<div id="town" hidden></div>
 <div id="top"><div class="pill"><span class="coin"></span><span id="gold">0</span></div><div class="pill sm cryp"><i class="cry"></i><span id="cryv">0</span></div><div class="pill sm shp"><i class="shd"></i><span id="shv">0</span></div><div class="pill sm stp"><i class="stn"></i><span id="stv">0</span></div><span class="sp"></span><button class="ib" id="fsb" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button class="ib" id="snd" aria-label="Sound"></button></div>
 <div id="sheet"><nav id="tabs"></nav><div id="pane"><div id="ph"><b id="pt"></b><span id="ps"></span></div><div id="body"></div><div id="foot"><div id="pstrip"></div><button class="primary" id="go">Go!</button></div></div></div>
 <div id="bhud" hidden><div id="btop"><div id="fl"><div id="dn"></div><div id="pips"></div><div class="pill sm" style="align-self:flex-start"><span class="coin"></span><span id="rg">0</span></div></div><div id="bctl"><button class="tg" id="auto">Auto</button><button class="tg" id="spd">1x</button></div></div><div id="bbot"></div></div>
@@ -1841,7 +1869,7 @@ function hintOnce(k,msg){ if(save.hint[k]) return; save.hint[k]=1; persist(); co
 /* ===== Spire Master : heroes, summoning, upgrades, gear, save ===== */
 const STARM=[0,1,1.22,1.5,1.85,2.3,2.9], LVCAP=[0,15,25,35,45,55,60];
 const STARC=['', '#b9b3c9','#6be08a','#59b8ff','#c77dff','#ffcf4a','#ff7ab8'];
-const RATES=[0,42,32,19,6,1], PITY=60, PULL=100, PULL10=900;
+let RATES=[0,42,32,19,6,1], PITY=60; const PULL=100, PULL10=900;
 const SHARD_GIVE=[0,3,8,20,50,120,200], PROMO_SH=[0,10,25,60,140,300], PROMO_G=[0,500,2000,8000,25000,60000];
 const MELEE={knight:1,rogue:1,bard:1}, ROSTER_MAX=40;
 const starStr=n=>'★'.repeat(Math.min(5,n))+(n>=6?'✦':'');
@@ -2059,10 +2087,10 @@ function updSnd(){ $('snd').innerHTML=save.mute?IC.sndOff:IC.sndOn; }
 function closeModal(){ $('modal').hidden=true; $('modal').innerHTML=''; }
 function nb(id){ if(id==='summon') return (save.freeDay!==todayKey()?1:0)+(save.cry>=PULL?1:0)?1:0; if(id==='heroes') return save.roster.filter(h=>canLevel(h)&&save.gold>=trainCost(h)||canPromote(h)&&save.shards>=PROMO_SH[h.star]&&save.gold>=PROMO_G[h.star]).length?1:0; return 0; }
 function renderSheet(){
-  $('tabs').innerHTML=TABS.map(t=>'<button class="tab'+(S.tab===t[0]?' on':'')+'" data-tab="'+t[0]+'">'+IC[t[0]]+t[1]+(nb(t[0])&&S.tab!==t[0]?'<span class="nb">!</span>':'')+'</button>').join('');
+  $('tabs').innerHTML='<button class="tab back" data-act="town">'+IC.town+'Town</button>'+TABV[S.bld||'dungeon'].map(k=>[k,TABN[k]||(TABS.find(x=>x[0]===k)||[0,k])[1]]).map(t=>'<button class="tab'+(S.tab===t[0]?' on':'')+'" data-tab="'+t[0]+'">'+IC[t[0]]+t[1]+(nb(t[0])&&S.tab!==t[0]?'<span class="nb">!</span>':'')+'</button>').join('');
   $('gold').textContent=fmt(save.gold); $('cryv').textContent=fmt(save.cry); $('shv').textContent=fmt(save.shards); $('stv').textContent=fmt(save.stones||0);
   const body=$('body'), keep=S.lastTab===S.tab?body.scrollTop:0; S.lastTab=S.tab;
-  const P={team:teamHtml,heroes:heroesHtml,summon:summonHtml,gear:gearHtml,tower:towerHtml}[S.tab]();
+  const P={team:teamHtml,heroes:heroesHtml,summon:summonHtml,gear:gearHtml,tower:towerHtml,upg:()=>['Upgrade',BLD[S.bld].n,upgHtml(S.bld)],tavern:tavernHtml,yard:yardHtml,library:libraryHtml}[S.tab]();
   $('pt').textContent=P[0]; $('ps').textContent=P[1]; if(S.tab==='team') $('ps').innerHTML='<span class="tbar hd"><span class="tpw">Power <b>'+fmt(teamPower())+'</b></span><button class="buy tsm" data-act="autofill">Auto-fill</button><button class="ghost tsm" data-act="clearteam">Clear</button></span>'; body.innerHTML=P[2]; body.scrollTop=keep;
   body.querySelectorAll('canvas[data-hid]').forEach(cn=>{ const hh=heroById(cn.getAttribute('data-hid')); if(hh) heroPortrait(cn,hh,+(cn.getAttribute('data-s')||40)); });
   renderFoot();
@@ -2175,7 +2203,7 @@ function startStage(f){
   const R={d:d,floor:f,kind:kind,replay:f<save.floor,units:[],mult:{hp:1,atk:1,spd:1},mcd:{rally:0,focus:0,guard:0},log:[],gold:0,potions:2,waves:wavesFor(f),wi:0,t0:performance.now()};
   const party=team.filter(Boolean), syn=applySyn(R,party), cap=captain();
   if(cap){ const C=CAPT[cap.cls], v=captVal(cap); if(C.m==='hp'||C.m==='atk'||C.m==='spd') R.mult[C.m]*=1+v; else R.mult[C.m]=(R.mult[C.m]||0)+v; R.cap=cap.id; }
-  team.forEach((h,i)=>{ if(!h) return; const u=heroUnit(h); u.slot=i; u.row=i<2?'f':'b'; refreshUnit(u,R.mult); u.hp=u.max; u.mor=clamp(moodOf(h)+(cap&&CAPT[cap.cls].mor||0),0,100); u.st={dmg:0,taken:0,heal:0,kills:0,casts:0}; u.cap=cap&&h===cap; R.units.push(u); });
+  team.forEach((h,i)=>{ if(!h) return; const u=heroUnit(h); u.slot=i; u.row=i<2?'f':'b'; refreshUnit(u,R.mult); u.hp=u.max; u.mor=clamp(moodOf(h)+TB()+(cap&&CAPT[cap.cls].mor||0),0,100); u.st={dmg:0,taken:0,heal:0,kills:0,casts:0}; u.cap=cap&&h===cap; R.units.push(u); });
   S.run=R; S.mode='battle'; MUS.mode=kind==='boss'?'boss':'dun'; save.inStage={f:f}; persist();
   R.log.push({f:f,t:'The team enters floor '+f+(cap?' led by Captain '+cap.name.split(' ')[0]:'')+'.'}); if(syn.length) R.log.push({f:f,t:'Team bonus: '+syn.map(s=>s.n).join(', ')+'.'});
   waveScale(R); beginFight(R.waves[0]); if(syn.length) setTimeout(()=>toast('Team bonus: '+syn.map(s=>s.n).join(' + '),'#c9a6ff'),300);
@@ -2207,7 +2235,7 @@ function stageEnd(win,fled){
   for(const u of R.units){ const h=u.hero, ok=u.alive||u.hiding; const row={h:h,ok:ok,up:0,note:'',st:u.st||{dmg:0,taken:0,heal:0,kills:0,casts:0},cap:u.cap};
     if(!ok){ h.lw=h.lw||pick(QU.dying.any); save.mem.push({n:h.name,cls:h.cls,star:h.star,lvl:h.lvl,lw:h.lw,f:f,d:Date.now()}); if(save.mem.length>80) save.mem.shift(); save.fallen.push(h.name); save.stat.lost++;
       save.roster=save.roster.filter(x=>x.id!==h.id); save.team=save.team.map(id=>id===h.id?null:id); if(save.captain===h.id) save.captain=null; h.gear={}; row.note='Fell on wave '+(R.wi+1); }
-    else { h.mood=clamp(Math.round((u.mor==null?moodOf(h):u.mor)*.6+moodOf(h)*.4+(win?(k==='boss'?10:3):fled?-8:-12)),0,100);
+    else { h.mood=clamp(Math.round((u.mor==null?moodOf(h):u.mor-TB())*.6+moodOf(h)*.4+(win?(k==='boss'?10:3):fled?-8:-12)),0,100);
       h.fights=(h.fights||0)+1;
       if(win){ const x=Math.round(stageExp(f,k)*(R.replay?.7:1)); res.exp=x; row.up=gainExp(h,x); row.note=row.up?'Lv '+h.lvl+'!':!canLevel(h)?(canAscend(h)?'Ready to ascend':'Max level'):h.exp>=lvlNeed(h.lvl)?'EXP full · train!':'+'+x+' EXP'; } else row.note='Survived'; }
     res.rows.push(row); }
@@ -2310,7 +2338,7 @@ function resolveAbandoned(){
   const R={d:d,floor:f,kind:kind,replay:f<save.floor,units:[],mult:{hp:1,atk:1,spd:1},mcd:{rally:0,focus:0,guard:0},log:[],gold:0,potions:2,waves:wavesFor(f),wi:0,t0:performance.now()};
   const party=team.filter(Boolean); applySyn(R,party); const cap=captain();
   if(cap){ const C=CAPT[cap.cls], v=captVal(cap); if(C.m==='hp'||C.m==='atk'||C.m==='spd') R.mult[C.m]*=1+v; else R.mult[C.m]=(R.mult[C.m]||0)+v; }
-  team.forEach((h,i)=>{ if(!h) return; const u=heroUnit(h); u.slot=i; u.row=i<2?'f':'b'; refreshUnit(u,R.mult); u.hp=u.max; u.mor=moodOf(h); u.st={dmg:0,taken:0,heal:0,kills:0,casts:0}; u.cap=cap&&h===cap; R.units.push(u); });
+  team.forEach((h,i)=>{ if(!h) return; const u=heroUnit(h); u.slot=i; u.row=i<2?'f':'b'; refreshUnit(u,R.mult); u.hp=u.max; u.mor=clamp(moodOf(h)+TB(),0,100); u.st={dmg:0,taken:0,heal:0,kills:0,casts:0}; u.cap=cap&&h===cap; R.units.push(u); });
   R.log.push({f:f,t:'You left mid-floor, so the team fought on without orders.'}); let win=true;
   for(R.wi=0;R.wi<R.waves.length;R.wi++){ const k=R.waves[R.wi]; if(k==='puzzle'){ for(const u of R.units) if(u.alive) u.hp=Math.max(1,u.hp-Math.round(u.max*.22)); R.log.push({f:f,t:'Nobody solved the puzzle room, so the trap went off.'}); continue; } waveScale(R); const al=R.units.filter(u=>u.alive); if(!al.length){ win=false; break; }
     if(R.wi){ const hp=(k==='boss'||k==='mini')?.25:.12; for(const u of al) u.hp=Math.min(u.max,u.hp+Math.round(u.max*hp)); }
@@ -2468,7 +2496,7 @@ Object.assign(CAPT,{paladin:{n:'Divine Ward',d:'team +{v}% health and starts bra
   monk:{n:'Inner Peace',d:'skills charge {v}% faster',m:'cd',v:.14},ninja:{n:'Shadowstep',d:'team +{v}% speed',m:'spd',v:.11},hunter:{n:'Pack Tactics',d:'team +{v}% attack',m:'atk',v:.09},
   necro:{n:'Grave Pact',d:'team +{v}% attack',m:'atk',v:.1},alchemist:{n:'Field Tonics',d:'team +{v}% health',m:'hp',v:.11},druid:{n:'Wild Growth',d:'team +{v}% health and starts brave',m:'hp',v:.09,mor:15},shaman:{n:'Ancestral Drums',d:'team +{v}% speed',m:'spd',v:.1}});
 /* ===== slow growth: battle EXP + training sessions, ascension every 10 levels, new beginning ===== */
-const TRAIN_DAY=6, ASC_ST=[5,12,25,45,70,100,140], ASC_G=[400,1500,5000,12000,30000,60000,100000];
+let TRAIN_DAY=6; const ASC_ST=[5,12,25,45,70,100,140], ASC_G=[400,1500,5000,12000,30000,60000,100000];
 const maxLvl=h=>Math.min(80,20+10*h.star);
 const lvCapH=h=>Math.min(maxLvl(h),10*((h.asc||0)+1));
 function lvlNeed(l){ return Math.round(30*Math.pow(l,1.5)); }
@@ -2793,6 +2821,92 @@ buildMaster=function(){ _pzBM(); const mb=$('mbar'); if(!mb) return; mb.querySel
 /* ---------- save safety ---------- */
 setInterval(()=>{ if(!document.hidden) persist(); },8000);
 window.addEventListener('pagehide',()=>persist());
+/* ===== the town: home screen, buildings, upgrades ===== */
+const CRYL=[0,100,200,350,600,950], STNL=[0,2,4,7,11,16];
+function shrineRates(L){ const d=L-1; return [0,42-2*d,32,19+d,Math.round((6+.8*d)*10)/10,Math.round((1+.2*d)*10)/10]; }
+const BLD={
+ dungeon:{n:'Dungeon',unlock:0,d:'Your heroes, your team, and the Spire.'},
+ shrine:{n:'Shrine',unlock:0,d:'Summon heroes. Upgrades give better odds and a faster pity counter.',eff:L=>{ const r=shrineRates(L); return ['Pity at '+(60-4*(L-1))+' summons','5-star odds '+r[5]+'%, 4-star '+r[4]+'%']; }},
+ forge:{n:'Forge',unlock:5,d:'The Armory. Upgrades make gear enhancement cheaper.',eff:L=>['Gear upgrades cost '+8*L+'% less']},
+ tavern:{n:'Tavern',unlock:10,d:'Keeps your heroes happy. Throw a feast to cheer everyone up.',eff:L=>['+'+3*L+' mood in every fight','Feast gives +'+(6+2*L)+' mood to all heroes']},
+ yard:{n:'Training Yard',unlock:15,d:'Heroes train harder here: more sessions per day, at a lower cost.',eff:L=>[(6+L)+' training sessions per day','Training costs '+6*L+'% less']},
+ library:{n:'Library',unlock:25,d:'Heroes study between fights and earn more EXP.',eff:L=>['+'+10*L+'% EXP from fights']}
+};
+const TORDER=['dungeon','shrine','tavern','forge','yard','library'];
+const TABV={dungeon:['team','heroes','tower'],shrine:['summon','upg'],forge:['gear','upg'],tavern:['tavern'],yard:['yard'],library:['library']};
+const TABN={upg:'Upgrade',tavern:'Tavern',yard:'Yard',library:'Library'};
+IC.upg='<svg viewBox="0 0 24 24"><path d="M12 3l7 8h-4v9H9v-9H5z" fill="#7dffb0" stroke="#1d1230" stroke-width="2" stroke-linejoin="round"/></svg>';
+IC.tavern='<svg viewBox="0 0 24 24"><path d="M6 5h10v11a3 3 0 01-3 3H9a3 3 0 01-3-3z" fill="#ffcf4a" stroke="#1d1230" stroke-width="2"/><path d="M16 8h2a2 2 0 010 6h-2" fill="none" stroke="#1d1230" stroke-width="2"/><path d="M6 6h10v3H6z" fill="#fff"/></svg>';
+IC.yard='<svg viewBox="0 0 24 24"><path d="M4 20L18 6l1-3-3 1L5 17M20 20L6 6 5 3l3 1 11 13" fill="#dfe8f5" stroke="#1d1230" stroke-width="2" stroke-linejoin="round"/></svg>';
+IC.library='<svg viewBox="0 0 24 24"><path d="M4 5h7v14H4zM13 5h7v14h-7z" fill="#7fb2ff" stroke="#1d1230" stroke-width="2"/><path d="M6 9h3M15 9h3" stroke="#fff" stroke-width="2"/></svg>';
+IC.town='<svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8v8h-6v-5H9v5H3z" fill="#ffb86b" stroke="#1d1230" stroke-width="2" stroke-linejoin="round"/></svg>';
+function ensureTown(){ if(!save.town||typeof save.town!=='object') save.town={}; const d={shrine:1,forge:0,tavern:0,yard:0,library:0}; for(const k in d) if(typeof save.town[k]!=='number') save.town[k]=d[k]; }
+function bl(k){ ensureTown(); return k==='dungeon'?1:(save.town[k]||0); }
+function TB(){ return save&&save.town?3*(save.town.tavern||0):0; }
+function applyTown(){ ensureTown(); const L=save.town.shrine||1; const r=shrineRates(L); RATES=r; PITY=60-4*(L-1); TRAIN_DAY=6+(save.town.yard||0); }
+function reqFloor(k,L){ return BLD[k].unlock+(L>1?8*(L-1):0); }
+/* economy hooks */
+const _enhCost0=enhCost; enhCost=function(g){ return Math.max(1,Math.round(_enhCost0(g)*(1-.08*bl('forge')))); };
+const _trainCost0=trainCost; trainCost=function(h){ return Math.max(1,Math.round(_trainCost0(h)*(1-.06*bl('yard')))); };
+const _gainExp0=gainExp; gainExp=function(h,x){ return _gainExp0(h,Math.round(x*(1+.1*bl('library')))); };
+function firstCry(f,k){ return k==='boss'?300:k==='mini'?120:60; }
+function floorStones(f,k,first){ return k==='boss'?(first?8:4):k==='mini'?(first?4:2):(Math.random()<(first?.35:.2)?1:0); }
+/* ---- art ---- */
+const BART={
+dungeon:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="46" ry="6" fill="#0006"/><path d="M24 110V50l8-6V30h8v10h8V24h8v16h8V18l8-6 8 6v22h8V24h8v16h8v10l8 6v60z" fill="#4a4568" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><path d="M40 110V74a20 20 0 0140 0v36z" fill="#120a24" stroke="#1d1230" stroke-width="3"/><path d="M48 110V78a12 12 0 0124 0v32z" fill="#ff8a3d" opacity=".75"/><path d="M60 12V0l14 5-14 5" fill="#ff5a6a" stroke="#1d1230" stroke-width="2"/><rect x="34" y="56" width="6" height="10" rx="2" fill="#ffcf4a"/><rect x="80" y="56" width="6" height="10" rx="2" fill="#ffcf4a"/></svg>',
+shrine:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="42" ry="6" fill="#0006"/><rect x="22" y="94" width="76" height="14" rx="3" fill="#6d6a8a" stroke="#1d1230" stroke-width="3"/><rect x="30" y="84" width="60" height="12" rx="3" fill="#8a87aa" stroke="#1d1230" stroke-width="3"/><rect x="30" y="38" width="12" height="46" fill="#a9a6c8" stroke="#1d1230" stroke-width="3"/><rect x="78" y="38" width="12" height="46" fill="#a9a6c8" stroke="#1d1230" stroke-width="3"/><path d="M24 38h72l-8-14H32z" fill="#8a87aa" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><path d="M60 40l12 18-12 22-12-22z" fill="#c9a6ff" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><path d="M60 40l-12 18 12 22z" fill="#9b6bff"/><circle cx="60" cy="58" r="22" fill="#c9a6ff" opacity=".25"/></svg>',
+forge:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="44" ry="6" fill="#0006"/><rect x="82" y="22" width="14" height="40" fill="#6d6a8a" stroke="#1d1230" stroke-width="3"/><path d="M14 108V58l46-28 46 28v50z" fill="#8a5a3a" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><path d="M8 62L60 28l52 34" fill="none" stroke="#4a2a1a" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="30" y="72" width="34" height="36" rx="4" fill="#ff7a2a" stroke="#1d1230" stroke-width="3"/><rect x="36" y="80" width="22" height="28" fill="#ffd23a"/><path d="M72 98h30v8H72zM78 90h18v8H78z" fill="#4c4a66" stroke="#1d1230" stroke-width="3"/></svg>',
+tavern:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="46" ry="6" fill="#0006"/><path d="M12 108V56l48-30 48 30v52z" fill="#b5764a" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><path d="M6 60L60 22l54 38" fill="none" stroke="#7a3a2a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/><rect x="44" y="74" width="24" height="34" rx="12" fill="#3a1f12" stroke="#1d1230" stroke-width="3"/><rect x="20" y="68" width="18" height="16" rx="3" fill="#ffd23a" stroke="#1d1230" stroke-width="3"/><rect x="80" y="68" width="18" height="16" rx="3" fill="#ffd23a" stroke="#1d1230" stroke-width="3"/><rect x="92" y="40" width="22" height="16" rx="3" fill="#e8c27a" stroke="#1d1230" stroke-width="3"/><path d="M98 44h8v8h-8z" fill="#fff"/></svg>',
+yard:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="48" ry="6" fill="#0006"/><rect x="10" y="94" width="100" height="16" rx="4" fill="#8a6a3a" stroke="#1d1230" stroke-width="3"/><path d="M14 94V70M34 94V70M86 94V70M106 94V70M10 76h100M10 88h100" stroke="#5a3a1a" stroke-width="5" stroke-linecap="round"/><rect x="54" y="30" width="12" height="64" fill="#a9733a" stroke="#1d1230" stroke-width="3"/><circle cx="60" cy="30" r="14" fill="#e8c27a" stroke="#1d1230" stroke-width="3"/><rect x="40" y="46" width="40" height="10" rx="4" fill="#a9733a" stroke="#1d1230" stroke-width="3"/><path d="M92 40l16 24M108 40L92 64" stroke="#dfe8f5" stroke-width="5" stroke-linecap="round"/></svg>',
+library:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="112" rx="42" ry="6" fill="#0006"/><path d="M20 108V50h80v58z" fill="#7fa0d8" stroke="#1d1230" stroke-width="3"/><path d="M12 52L60 14l48 38z" fill="#3b4f9a" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><circle cx="60" cy="40" r="8" fill="#ffd23a" stroke="#1d1230" stroke-width="3"/><rect x="46" y="72" width="28" height="36" rx="14" fill="#1b2a5a" stroke="#1d1230" stroke-width="3"/><rect x="26" y="62" width="14" height="18" rx="2" fill="#ffe9a0" stroke="#1d1230" stroke-width="3"/><rect x="80" y="62" width="14" height="18" rx="2" fill="#ffe9a0" stroke="#1d1230" stroke-width="3"/></svg>',
+plot:'<svg viewBox="0 0 120 120"><ellipse cx="60" cy="100" rx="46" ry="10" fill="#0005"/><path d="M16 100h88" stroke="#c3b5ea" stroke-width="4" stroke-dasharray="8 6" stroke-linecap="round"/><path d="M30 100V70h60v30" fill="none" stroke="#c3b5ea" stroke-width="3" stroke-dasharray="6 6" opacity=".7"/><path d="M52 56l20-20 8 8-20 20z" fill="#c98a4a" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/><path d="M42 74l12-12 8 8z" fill="#dfe8f5" stroke="#1d1230" stroke-width="3" stroke-linejoin="round"/></svg>'
+};
+const BPOS={shrine:'left:3%;bottom:34%',tavern:'left:19%;bottom:11%',dungeon:'left:36.5%;bottom:17%',forge:'left:66%;bottom:40%',yard:'left:66%;bottom:11%',library:'left:83%;bottom:33%'};
+function renderTown(){ ensureTown(); const T=$('town'); if(!T) return; $('gold').textContent=fmt(save.gold); $('cryv').textContent=fmt(save.cry); $('shv').textContent=fmt(save.shards); $('stv').textContent=fmt(save.stones||0);
+  let h='<div class="tsky"></div><div class="thill"></div><div class="tground"></div><div class="tpath"></div>';
+  TORDER.forEach(k=>{ const b=BLD[k], L=bl(k), built=L>0, big=k==='dungeon';
+    const bd=k==='shrine'?nb('summon'):k==='dungeon'?nb('heroes'):0;
+    h+='<button class="bld'+(built?'':' plot')+(big?' big':'')+'" data-bld="'+k+'" id="b-'+k+'" style="'+BPOS[k]+'"><span class="bart">'+(built?BART[k]:BART.plot)+'</span><span class="bnm">'+b.n+(built&&k!=='dungeon'?' <i>Lv '+L+'</i>':'')+'</span>'+(built?'':'<span class="bsub">'+(save.best>=b.unlock?'Tap to build':'Clear floor '+b.unlock)+'</span>')+(bd?'<span class="nb">!</span>':'')+'</button>'; });
+  h+='<div class="tcap">Spire Master · Camp</div>'; T.innerHTML=h; }
+function openTown(){ S.view='town'; renderTown(); showMode(); }
+function openBld(k){ S.view='bld'; S.bld=k; S.tab=TABV[k][0]; S.slot=-1; sfx('tap'); showMode(); renderSheet(); }
+function applyView(){ ensureTown(); const t=S.mode==='hub'&&S.view==='town'; const T=$('town'); if(T) T.hidden=!t; if(S.mode==='hub') $('sheet').hidden=t; APP.classList.toggle('intown',t); const fo=$('foot'); if(fo) fo.hidden=S.bld!=='dungeon'; }
+const _showMode0=showMode; showMode=function(){ _showMode0(); applyView(); };
+const _drawLobby0=drawLobby; drawLobby=function(dt){ if(S.view==='town') return; _drawLobby0(dt); };
+/* ---- upgrade panel ---- */
+function costsFor(k,L){ return {cry:CRYL[L],stn:STNL[L]}; }
+function upgHtml(k){ const b=BLD[k], L=bl(k); let h='<div class="bu"><h3>'+b.n+' · Level '+L+'<small>/5</small></h3><p class="d">'+b.d+'</p><div class="bef"><b>Now</b>'+b.eff(L).map(x=>'<div>'+x+'</div>').join('')+'</div>';
+  if(L>=5) return h+'<div class="bmax">Fully upgraded!</div></div>';
+  const n=L+1, c=costsFor(k,n), need=reqFloor(k,n), ok=save.best>=need, aff=save.cry>=c.cry&&(save.stones||0)>=c.stn;
+  h+='<div class="bef nx"><b>Level '+n+'</b>'+b.eff(n).map(x=>'<div>'+x+'</div>').join('')+'</div>';
+  h+=ok?'<button class="buy big2 gold" data-act="bup" data-id="'+k+'"'+(aff?'':' disabled')+'><span class="bl">Upgrade</span><span class="bs"><i class="cry"></i>'+c.cry+' &nbsp;<i class="stn"></i>'+c.stn+'</span></button>':'<div class="blk">Clear floor '+need+' to upgrade (best: '+save.best+')</div>';
+  return h+'</div>'; }
+function doBuy(k){ const L=bl(k), n=L+1; if(n>5) return false; const c=costsFor(k,n), need=reqFloor(k,n); if(save.best<need||save.cry<c.cry||(save.stones||0)<c.stn){ sfx('no'); return false; }
+  save.cry-=c.cry; save.stones-=c.stn; save.town[k]=n; applyTown(); persist(); sfx('win'); toast(BLD[k].n+(L?' upgraded to Lv '+n:' built')+'!','#7dffb0'); return true; }
+function buildModal(k){ const b=BLD[k], need=reqFloor(k,1), ok=save.best>=need, c=costsFor(k,1), aff=save.cry>=c.cry&&(save.stones||0)>=c.stn, m=$('modal'); m.hidden=false; m.className='ov';
+  m.innerHTML='<div class="panel bu bm"><h3>Build the '+b.n+'</h3><div class="bart bmart">'+BART[k]+'</div><p class="d">'+b.d+'</p><div class="bef nx">'+b.eff(1).map(x=>'<div>'+x+'</div>').join('')+'</div>'+(ok?'<button class="buy big2 gold" data-act="bbuild" data-id="'+k+'"'+(aff?'':' disabled')+'><span class="bl">Build</span><span class="bs"><i class="cry"></i>'+c.cry+' &nbsp;<i class="stn"></i>'+c.stn+'</span></button>':'<div class="blk">Clear floor '+need+' to unlock (best: '+save.best+')</div>')+'<button class="ghost" data-act="bclose">Close</button></div>'; }
+/* ---- building pages ---- */
+function tavernHtml(){ const L=bl('tavern'), gain=6+2*L, cost=150, avg=save.roster.length?Math.round(save.roster.reduce((a,h)=>a+moodOf(h),0)/save.roster.length):0;
+  return ['Tavern','Lv '+L,'<div class="bu"><p class="d">'+BLD.tavern.d+'</p><div class="bef"><b>Camp mood</b><div>Average hero mood: '+avg+'</div></div><button class="buy big2" data-act="feast"><span class="bl">Throw a feast (+'+gain+' mood to all)</span><span class="bs"><span class="coin"></span>'+cost+'</span></button></div>'+upgHtml('tavern')]; }
+function yardHtml(){ const L=bl('yard'); return ['Training Yard','Lv '+L,'<div class="bu"><p class="d">'+BLD.yard.d+'</p><button class="buy big2" data-act="ytrain"><span class="bl">Train everyone once</span><span class="bs">uses a session per hero</span></button></div>'+upgHtml('yard')]; }
+function libraryHtml(){ return ['Library','Lv '+bl('library'),'<div class="bu"><p class="d">'+BLD.library.d+' Every fight you win teaches more.</p></div>'+upgHtml('library')]; }
+const _rs0=renderSheet; renderSheet=function(){
+  if(S.view!=='bld'&&S.mode==='hub'&&S.view==='town'){ applyView(); return; }
+  const list=TABV[S.bld||'dungeon']; if(!list.includes(S.tab)) S.tab=list[0];
+  return _rs0(); };
+document.addEventListener('click',function(e){
+  const bd=e.target.closest('[data-bld]'); if(bd&&S.mode==='hub'){ audioInit(); const k=bd.getAttribute('data-bld'); if(bl(k)>0) openBld(k); else { sfx('tap'); buildModal(k); } return; }
+  const t=e.target.closest('[data-act]'); if(!t) return; const a=t.getAttribute('data-act'), id=t.getAttribute('data-id');
+  if(a==='town'){ sfx('tap'); openTown(); }
+  else if(a==='bup'){ if(doBuy(id)){ renderSheet(); renderTown(); } }
+  else if(a==='bbuild'){ if(doBuy(id)){ closeModal(); renderTown(); } }
+  else if(a==='bclose'){ closeModal(); }
+  else if(a==='feast'){ if(save.gold<150){ sfx('no'); toast('Not enough gold'); return; } save.gold-=150; const g=6+2*bl('tavern'); save.roster.forEach(h=>{ h.mood=Math.min(100,moodOf(h)+g); }); persist(); sfx('buy'); toast('The heroes feast! +'+g+' mood','#ffe27a'); renderSheet(); }
+  else if(a==='ytrain'){ let n=0; save.roster.forEach(h=>{ if(train(h)) n++; }); sfx(n?'buy':'no'); toast(n?n+' heroes trained':'Nobody could train right now',n?'#7dffb0':'#fff'); renderSheet(); }
+});
+
+S.view='town'; S.bld='dungeon';
+if(typeof adopt==='function'){ const _ad0=adopt; adopt=function(s){ const r=_ad0(s); applyTown(); return r; }; }
 /* ===== boot ===== */
 /* re-load the saved game here: game.js runs before prog.js defines maxLvl, so its first load attempt throws and leaves a blank save */
 try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){ window.__loadErr2=String(e); }
@@ -2804,7 +2918,7 @@ try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_)
   }catch(e){}
 })();
 document.addEventListener('visibilitychange',()=>{ if(document.hidden){ persist(); if(cloud.dirty) cloudFlush(); } });
-updSnd(); showMode(); renderSheet();
+try{ applyTown(); }catch(e){} updSnd(); openTown(); renderSheet();
 if(!resolveAbandoned()){ const v=volunteers(); if(v){ renderSheet(); setTimeout(()=>toast('A new band of recruits arrives at camp. Time to start over.','#7dffb0'),900); } }
 { const got=dailyLogin(); if(got) setTimeout(()=>toast('Daily reward: +'+got+' crystals, +200 gold','#c9a6ff'),600); }
 if(save.tut==='done'||save.tut===undefined&&false) {} ; if(false&&!save.hint.start) setTimeout(()=>hintOnce('start','Welcome, Master! Summon heroes, set your team of 5 (front row tanks, back row damage), and climb the Spire. Heroes who fall are gone forever. You start with crystals for a 10x summon!'),500);
@@ -2823,11 +2937,12 @@ requestAnimationFrame(frame);
 /* ===== first-time tutorial ===== */
 const TUT={i:-1,L:null,tm:0,rost0:0,clk:false,gate:false};
 const TSTEPS=[
- {t:'Welcome, Master! The Spire has <b>100 floors</b> and you are going to climb it. Let me show you the ropes.',next:1},
- {sel:'.tab[data-tab="summon"]',t:'First you need heroes. Tap <b>Summon</b>.',until:()=>S.tab==='summon'},
- {sel:'[data-act="sum"][data-id="10"]',t:'You have enough crystals for a <b>Summon x10</b>. Tap it!',until:()=>save.roster.length>TUT.rost0,after:1700},
+ {t:'Welcome, Master! The Spire has <b>100 floors</b> and you are going to climb it. This is your camp. Let me show you around.',next:1},
+ {sel:'#b-shrine',t:'First you need heroes. Tap the <b>Shrine</b>.',until:()=>S.view==='bld'&&S.bld==='shrine'},
+ {sel:'[data-act="sum"][data-id="10"]',t:'You have enough crystals for a <b>Summon x10</b>. Tap it!',until:()=>save.roster.length>TUT.rost0,after:1700,rost:1},
  {t:'More stars means a stronger hero. Heroes who fall in battle are <b>gone forever</b>, so protect your team.',next:1},
- {sel:'.tab[data-tab="team"]',t:'Now build your team. Tap <b>Team</b>.',until:()=>S.tab==='team'},
+ {sel:'.tab.back',t:'Tap <b>Town</b> to go back to camp.',until:()=>S.view==='town'},
+ {sel:'#b-dungeon',t:'Now tap the <b>Dungeon</b>. That is where you build your team and climb the Spire.',until:()=>S.view==='bld'&&S.bld==='dungeon'},
  {sel:'[data-act="autofill"]',t:'Your team has <b>5 slots</b>: 2 in the <b>front row</b> for tanks, 3 in the <b>back row</b> for healers and damage. Tap <b>Auto-fill</b> to set a strong team.',click:1},
  {sel:'.tbar',t:'You can also <b>hold and drag</b> heroes to swap their spots, and tap a hero to make them <b>captain</b>.',next:1,soft:1},
  {sel:'.tab[data-tab="heroes"]',t:'Tap <b>Heroes</b> to see everyone you own.',until:()=>S.tab==='heroes'},
@@ -2837,22 +2952,24 @@ const TSTEPS=[
  {t:'Heroes fight on their own. Keep an eye on their health and mood. The more they win, the happier they get.',next:1,soft:1,need:()=>S.mode==='battle'},
  {wait:()=>S.mode==='result'},
  {t:'After every floor you get a <b>recap</b> showing who did the work. Tap to return to camp, then keep climbing!',next:1,soft:1,top:1},
- {t:'That is it, Master. Here is <b>100 crystals</b> to start. Good luck in the Spire!',next:1,fin:1}
+ {t:'Back in camp, clear floors to unlock the <b>Forge, Tavern, Training Yard and Library</b>. Upgrade them with crystals and orange stones. Here is <b>100 crystals</b> to start. Good luck!',next:1,fin:1}
 ];
+const iGo=TSTEPS.findIndex(s=>s.sel==='#go'), iWait=TSTEPS.findIndex(s=>s.wait&&!s.t);
 function tutDone(reward){ save.tut='done'; if(reward){ save.cry+=100; if(typeof updTop==='function') try{updTop();}catch(e){} } persist(); clearInterval(TUT.tm); if(TUT.L){ TUT.L.remove(); TUT.L=null; } try{ renderSheet(); }catch(e){} }
 function tutMake(){ if(TUT.L) return; const L=document.createElement('div'); L.id='tut'; L.innerHTML='<div id="tblk"></div><div id="tring"></div><div id="tbub"><div id="ttx"></div><button id="tnx" class="primary">Next</button></div><button id="tskip">Skip tutorial</button><div id="tcf" hidden><div class="panel"><h3>Skip the tutorial?</h3><p>You will not see it again.</p><div class="row"><button id="tyes" class="buy">Yes, skip</button><button id="tno" class="buy gold">Keep going</button></div></div></div>'; APP.appendChild(L); TUT.L=L;
   $('tskip').onclick=()=>{ $('tcf').hidden=false; };
   $('tno').onclick=()=>{ $('tcf').hidden=true; };
   $('tyes').onclick=()=>tutDone(false);
   $('tnx').onclick=()=>{ sfx('tap'); const s=TSTEPS[TUT.i]; if(s.fin) return tutDone(true); tutGo(TUT.i+1); }; }
-function tutGo(i){ TUT.i=i; TUT.gate=false; if(i<=9) save.tut=i; const s=TSTEPS[i]; if(!s){ tutDone(true); return; } if(s.after){ TUT.gate=true; setTimeout(()=>{ TUT.gate=false; },s.after); } if(i===2) TUT.rost0=save.roster.length; }
+function tutGo(i){ TUT.i=i; TUT.gate=false; if(i<=iGo) save.tut=i; const s=TSTEPS[i]; if(!s){ tutDone(true); return; } if(s.after){ TUT.gate=true; setTimeout(()=>{ TUT.gate=false; },s.after); } if(s.rost) TUT.rost0=save.roster.length; }
 function tutTick(){ const L=TUT.L; if(!L) return; const s=TSTEPS[TUT.i]; if(!s){ return; }
   if(save.tut==='done'){ tutDone(false); return; }
-  if((TUT.i===10||TUT.i===11)&&S.mode==='result'){ tutGo(12); return; }
+  if(TUT.i>iGo&&TUT.i<iWait&&S.mode==='result'){ tutGo(iWait); return; }
   if(s.wait){ if(s.wait()){ tutGo(TUT.i+1); return; } if(!s.t){ L.style.display='none'; return; } }
   if(s.until&&!TUT.gate&&s.until()){ tutGo(TUT.i+1); return; }
   const busy=$('sumfx')||(!$('modal').hidden&&!(s.top))||S.mode==='result'&&!s.top&&!s.wait; const modalOpen=!$('modal').hidden;
-  if(TUT.gate||(s.wait&&!s.t)||(modalOpen&&!s.top&&TUT.i<13)||$('sumfx')||(S.mode==='battle'&&TUT.i<10)||(s.need&&!s.need())){ L.style.display='none'; return; }
+  if(TUT.gate||(s.wait&&!s.t)||(modalOpen&&!s.top&&TUT.i<=iWait)||$('sumfx')||(S.mode==='battle'&&TUT.i<=iGo)||(s.need&&!s.need())){ L.style.display='none'; return; }
+  { const e0=s.sel?document.querySelector(s.sel):null; if(s.sel&&!(e0&&e0.offsetParent!==null)){ L.style.display='none'; return; } }
   L.style.display='';
   const a=APP.getBoundingClientRect(), tb=$('tblk'), rg=$('tring'), bub=$('tbub'); const el=s.sel?document.querySelector(s.sel):null;
   $('ttx').innerHTML=s.t; $('tnx').style.display=s.next?'':'none';
@@ -2870,8 +2987,9 @@ function tutTick(){ const L=TUT.L; if(!L) return; const s=TSTEPS[TUT.i]; if(!s){
 }
 document.addEventListener('click',function(e){ if(!TUT.L) return; const s=TSTEPS[TUT.i]; if(s&&s.click&&s.sel&&e.target.closest(s.sel)) setTimeout(()=>{ if(TSTEPS[TUT.i]===s) tutGo(TUT.i+1); },60); },true);
 function tutBoot(){ if(save.tut==='done') return; if(save.tut===undefined){ if(save.best>0||save.floor>1||(save.pulls||0)>0&&save.roster.length>8){ save.tut='done'; persist(); return; } save.tut=0; }
-  tutMake(); tutGo(Math.min(+save.tut||0,9)); TUT.tm=setInterval(tutTick,150); tutTick(); }
+  tutMake(); { const sv=+save.tut||0; tutGo(sv>=4?4:sv>=1?1:0); } TUT.tm=setInterval(tutTick,150); tutTick(); }
 if(window.__dbg) window.__dbg.TUT=TUT;
 if(window.__dbg) window.__dbg.tutGo=tutGo;
 { const _ho=hintOnce; hintOnce=function(k,m){ if(TUT.L) return; return _ho(k,m); }; }
+if(window.__dbg){ window.__dbg.town=()=>({RATES:RATES,PITY:PITY,TD:TRAIN_DAY,tb:TB(),town:save.town}); }
 })();</script></body></html>
