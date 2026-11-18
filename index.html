@@ -3177,7 +3177,7 @@ function townPeople(){ clearInterval(TW.timer); const box=$('tpeople'); if(!box)
 /* ---- scenery (left%, base y%, width%) ---- */
 const DECO=[['pond',2,97,17],['tree1',4,24,9.5],['tree1',95,26,9.5],['tree1',3,58,8],['tree1',96,62,8.5],['tree2',13,14,5.5],['tree2',87,13,5.5],['tree2',31,17,5],['tree2',69,17,5],['tree2',9,84,5],['tree2',92,92,5.5],['tree1',34,100,7],['tree1',68,100,7],
  ['rock',27,50,3.4],['rock',58,90,3.2],['rock',90,50,3.6],['rock',72,52,3],['rock',5,75,3],['flowerbed',5,44,6],['flowerbed',95,44,6],['lamp',38,58,3.6],['lamp',62,58,3.6]];
-function decoHtml(){ return '<div id="tdeco">'+DECO.slice().sort((a,b)=>a[2]-b[2]).map(d=>'<img class="dc" src="'+BIMG[d[0]]+'" alt="" draggable="false" style="left:'+d[1]+'%;top:'+d[2]+'%;width:'+d[3]+'%">').join('')+'<img class="dc fnt" src="'+BIMG.fountain+'" alt="" draggable="false" style="left:50%;top:61%;width:12.5%"></div>'; }
+function decoHtml(){ return '<div id="tdeco">'+DECO.slice().sort((a,b)=>a[2]-b[2]).map(d=>'<img class="dc" src="'+BIMG[d[0]]+'" alt="" draggable="false" style="left:'+d[1]+'%;top:'+d[2]+'%;width:'+d[3]+'%">').join('')+'</div>'; }
 
 /* ---- per-building look ---- */
 const BFLAV={shrine:'The air hums with old magic.',forge:'Hot iron and the ring of hammers.',tavern:'Laughter, lanterns and a warm fire.',yard:'Dust, grunts and wooden swords.',library:'Quiet pages and candlelight.'};
