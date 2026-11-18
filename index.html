@@ -555,6 +555,7 @@ html.rotd,html.rotd body{overflow:hidden}
 #ps:has(.tbar){flex:1 0 100%;order:3;overflow:visible}
 .gs img{width:26px!important;height:26px!important;flex:none;object-fit:contain}.gs>div,.gs>span{min-width:0}
 .gic img{width:100%;height:100%;object-fit:contain}
+#pstrip{overflow:hidden}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -2973,7 +2974,7 @@ function pzPath(R,f){ const C=4, Rw=5, path=[]; let c=Math.floor(Math.random()*C
     x.classList.add('step'); k++; sfx('coin'); if(k>=path.length) pzEnd(true,'Safely across!'); })); }
 /* ---------- guide ---------- */
 function openGuide(sec){ sec=sec||S.gsec||'moods'; S.gsec=sec; const m=$('modal'); m.hidden=false; m.className='ov';
-  const tabs=[['moods','Moods'],['cmd','Commands'],['cur','Currencies'],['floors','Floors'],['save','Save']];
+  const tabs=[['moods','Moods'],['cmd','Commands'],['cur','Currencies'],['floors','Floors'],['town','Town'],['gear','Gear'],['save','Save']];
   const body={
     moods:'<p>Every hero has a mood from 0 to 100. It changes their stats in battle and shows as a coloured dot by their health bar.</p><table class="gt"><tr><th>Mood</th><th>When</th><th>Effect</th></tr>'+
       '<tr><td style="color:#ffcf4a">Cocky</td><td>80+</td><td>+8% attack, −4% health</td></tr><tr><td style="color:#7dffb0">Happy</td><td>55–79</td><td>+4% attack, +4% speed</td></tr><tr><td style="color:#b9b3c9">Tired</td><td>30–54</td><td>−5% speed</td></tr><tr><td style="color:#ff8a9a">Scared</td><td>below 30</td><td>−10% attack, −4% speed, and a 30% chance to refuse your skill orders</td></tr></table>'+
@@ -2988,6 +2989,8 @@ function openGuide(sec){ sec=sec||S.gsec||'moods'; S.gsec=sec; const m=$('modal'
       '<tr><td><i class="stn"></i> <b>Ascension stones</b> (the orange gems)</td><td>Breaking a hero\'s level cap every 10 levels. From bosses (most), mini bosses, puzzle rooms and sometimes normal floors.</td></tr></table>',
     floors:'<p>Each floor is a run of waves: 4 waves early, 5 from floor 15, 6 from floor 40. Every 5th floor ends with a mini boss and every 10th with a boss. Health carries over between waves (+12% heal between waves, +25% before a boss).</p>'+
       '<p><b>Puzzle rooms</b> appear in the middle of floors ending in 3 and 7. They are timed:</p><ul><li><b>Rune Lock</b>: watch the runes light up, then repeat the order.</li><li><b>Braziers</b>: put out every fire; each tap flips that brazier and its neighbours.</li><li><b>Hidden Path</b>: memorise the glowing tiles, then cross bottom to top.</li></ul><p>Solve it for gold, gear or a stone and a small heal. Fail and a trap hits every hero for 22% health (it can\'t kill), so the fights after it get much harder.</p><p>There is no retreat. Closing the game mid-floor makes the team fight on without you.</p>',
+    town:'<p>The town unlocks as you climb the Spire. Tap a building to open it; each one can be upgraded with gold.</p><table class="gt"><tr><th>Building</th><th>Unlocks</th><th>What it does</th></tr><tr><td><b>Shrine</b></td><td>Start</td><td>Summon heroes. Upgrades improve rare-hero odds and shorten the pity counter.</td></tr><tr><td><b>Forge</b></td><td>Floor 5</td><td>Enhance gear. Upgrades make enhancing cheaper.</td></tr><tr><td><b>Tavern</b></td><td>Floor 10</td><td>Raises mood in every fight, and a Feast cheers up the whole team.</td></tr><tr><td><b>Training Yard</b></td><td>Floor 15</td><td>More daily training sessions at a lower cost.</td></tr><tr><td><b>Library</b></td><td>Floor 25</td><td>Heroes earn more EXP from fights.</td></tr></table><p>A red ! over a building means something new is waiting there.</p>',
+    gear:'<p>Each hero has a <b>Weapon</b>, <b>Armor</b> and <b>Charm</b> slot. Weapons are class-locked: a wizard can only use staffs, a knight only swords. Armor comes in plate, leather and robe, and each class wears its own kind.</p><p>Weapons also add a small role bonus: Tanks gain health, Fighters attack, Assassins and Marksmen crit, and casters recharge skills faster. Equipped gear shows on your hero in battle. Use the Forge to enhance it, or salvage spare pieces.</p>',
     save:'<p>Your progress saves automatically after every action and every few seconds, with a backup copy. Game updates never wipe it.</p><p>Each place you play keeps its <b>own</b> save: the Home Screen app and the copy inside Claude are separate. To move progress, copy your save code here and load it on the other one.</p><div class="btns"><button class="buy" data-act="gexp">Copy save code</button></div><textarea id="gsave" placeholder="Paste a save code here to load it"></textarea><div class="btns"><button class="ghost" data-act="gimp">Load save code</button></div><p id="gsmsg" class="pzmsg"></p>'
   }[sec];
   m.innerHTML='<div class="panel guide"><h2>Guide</h2><div class="gtabs">'+tabs.map(t=>'<button class="fchip'+(t[0]===sec?' on':'')+'" data-act="gsec" data-id="'+t[0]+'">'+t[1]+'</button>').join('')+'</div><div class="gbody">'+body+'</div><div class="btns"><button class="primary" data-act="mclose">Got it</button></div></div>'; }
