@@ -3251,7 +3251,7 @@ const TIMG={co:'data:image/webp;base64,UklGRsCJAABXRUJQVlA4WAoAAAAQAAAALwIAUwEAQ
   const sp=document.getElementById('ilogo'); if(sp){ sp.innerHTML='<img src="'+TIMG.co+'" alt="Embergate Games">'; }
   const t=document.getElementById('ititle'); if(t){ t.style.background='#1a0c33 url('+TIMG.bg+') center/cover no-repeat'; const tw=document.getElementById('itower'), tx=document.getElementById('itx'); if(tw) tw.remove(); if(tx) tx.remove();
     const im=document.createElement('img'); im.id='igame'; im.src=TIMG.gl; im.alt='Spire Master'; t.appendChild(im); }
-  const st=document.createElement('style'); st.textContent='#ilogo img{width:min(62vw,70vh);max-height:60vh;object-fit:contain;animation:ipop 1.2s ease both;filter:drop-shadow(0 0 16px rgba(255,140,60,.55))}#igame{position:absolute;left:0;right:0;margin:0 auto;top:3%;height:46%;width:auto;filter:drop-shadow(0 6px 0 rgba(20,6,40,.55));animation:ibob 3s ease-in-out infinite}#ititle #itap{left:50%;right:auto;transform:translateX(-50%);padding:5px 22px;border-radius:20px;background:rgba(20,8,40,.62);white-space:nowrap;bottom:11%}#ititle #ico{color:rgba(255,255,255,.7);text-shadow:0 1px 3px #000}#istars i{opacity:.35}';
+  const st=document.createElement('style'); st.textContent='#intro{position:fixed!important;left:0;top:0;right:0;bottom:0;width:auto!important;height:auto!important}#ilogo{animation-duration:4.4s!important}#ititle{background-color:#1a0c33}#ilogo img{width:min(62vw,70vh);max-height:60vh;object-fit:contain;animation:ipop 1.2s ease both;filter:drop-shadow(0 0 16px rgba(255,140,60,.55))}#igame{position:absolute;left:0;right:0;margin:0 auto;top:3%;height:46%;width:auto;filter:drop-shadow(0 6px 0 rgba(20,6,40,.55));animation:ibob 3s ease-in-out infinite}#ititle #itap{left:50%;right:auto;transform:translateX(-50%);padding:5px 22px;border-radius:20px;background:rgba(20,8,40,.62);white-space:nowrap;bottom:11%}#ititle #ico{color:rgba(255,255,255,.7);text-shadow:0 1px 3px #000}#istars i{opacity:.35}';
   document.head.appendChild(st); })();
 /* ===== intro / title screen ===== */
 (function(){ const I=$('intro'); if(!I) return; const st=$('istars');
@@ -3260,8 +3260,8 @@ const TIMG={co:'data:image/webp;base64,UklGRsCJAABXRUJQVlA4WAoAAAAQAAAALwIAUwEAQ
   let phase=0, tm=0;
   function title(){ if(phase>0) return; phase=1; clearTimeout(tm); $('ilogo').hidden=true; $('ititle').hidden=false; }
   function start(){ if(phase===0){ title(); return; } if(phase!==1) return; phase=2; try{ audioInit(); sfx('win'); }catch(e){} I.classList.add('out'); setTimeout(()=>{ I.remove(); if(typeof tutBoot==='function') tutBoot(); },600); }
-  tm=setTimeout(title,2600);
-  I.addEventListener('pointerdown',start);
+  const t0=performance.now(); tm=setTimeout(title,4400);
+  I.addEventListener('pointerdown',()=>{ if(phase===0&&performance.now()-t0<2200) return; start(); });
 })();
 /* ===== first-time tutorial ===== */
 const TUT={i:-1,L:null,tm:0,rost0:0,clk:false,gate:false};
