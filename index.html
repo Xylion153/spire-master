@@ -3131,6 +3131,44 @@ function bsceneUpdate(){ let sc=$('bscene'); const on=S.mode==='hub'&&S.view==='
     sc.innerHTML='<div class="bsp">'+p+'</div><div class="bsg"></div><img class="bsi" src="'+BIMG[S.bld]+'" alt="" draggable="false"><div class="bsn"><b>'+BLD[S.bld].n+'</b><span>'+BFLAV[S.bld]+'</span></div>'; }
   sc.hidden=false; }
 { const _av0=applyView; applyView=function(){ _av0(); bsceneUpdate(); }; }
+/* ===== class-specific gear: weapons locked to a class, armor by weight, small weapon effects ===== */
+var WNAME={knight:'Sword',paladin:'Holy Mace',berserker:'Great Axe',samurai:'Katana',monk:'Iron Fists',rogue:'Dagger',ninja:'Kunai',archer:'Bow',hunter:'Crossbow',wizard:'Staff',necro:'Bone Staff',alchemist:'Flask Wand',cleric:'Scepter',druid:'Branch Staff',bard:'Lute',shaman:'Totem'};
+var WTK=['plate','leather','robe'], WTN={plate:'Plate',leather:'Leather',robe:'Robe'};
+var ANAMES={plate:['Mail','Plate','Cuirass','Bulwark','Aegis Plate'],leather:['Jerkin','Vest','Leathers','Hide','Shadow Cloak'],robe:['Robe','Vestment','Mantle','Wraps','Sage Robe']};
+var WTOF={Tank:'plate',Fighter:'plate',Assassin:'leather',Marksman:'leather',Mage:'robe',Healer:'robe',Support:'robe'};
+var WFXD={Tank:'health',Fighter:'attack',Assassin:'crit',Marksman:'crit',Mage:'faster skill',Healer:'faster skill',Support:'faster skill'};
+function wtOf(cls){ try{ return WTOF[ROLE[cls]]||'plate'; }catch(e){ return 'plate'; } }
+function myClasses(){ try{ return save&&save.roster&&save.roster.length?Array.from(new Set(save.roster.map(h=>h.cls))):[]; }catch(e){ return []; } }
+function ensureGear(g){
+  if(g.slot==='w'&&!g.cls){ const o=gearOwner(g); g.cls=o?o.cls:CLSK[g.seed%CLSK.length]; }
+  if(g.slot==='a'&&!g.wt){ const o=gearOwner(g); g.wt=o?wtOf(o.cls):WTK[g.seed%3]; }
+  return g; }
+function mkGear(slot,rar,floor,cls){
+  const g={id:'g'+Date.now().toString(36)+(GID++),slot:slot,rar:rar,plus:0,seed:Math.floor(Math.random()*1e6),f:floor||1}, mine=myClasses();
+  const pickC=()=>mine.length&&Math.random()<.7?mine[Math.floor(Math.random()*mine.length)]:(mine.length?CLSK[Math.floor(Math.random()*CLSK.length)]:'knight');
+  if(slot==='w') g.cls=cls||pickC(); if(slot==='a') g.wt=wtOf(cls||pickC()); return g; }
+function gearName(g){ ensureGear(g); const base=g.slot==='w'?(WNAME[g.cls]||'Blade'):g.slot==='a'?ANAMES[g.wt][g.seed%5]:GNAMES.c[g.seed%5]; return GPRE[g.rar]+' '+base+(g.plus?' +'+g.plus:''); }
+function gearVal(g){ ensureGear(g); return GBASE[g.rar]*(1+.12*g.plus)*(g.slot==='c'?.5:1)*(g.slot==='a'?(g.wt==='plate'?1.2:g.wt==='robe'?.8:1):1); }
+function gearDesc(g){ ensureGear(g); const v=gearVal(g), p=Math.round(v*100);
+  if(g.slot==='w') return '+'+p+'% attack · '+CLS[g.cls].n+' only · +'+Math.round(v*40)+'% '+WFXD[ROLE[g.cls]];
+  if(g.slot==='a') return '+'+p+'% health · '+WTN[g.wt]+(g.wt==='robe'?' · faster skill':'');
+  return '+'+p+'% speed, +'+Math.round(v*60)+'% crit'; }
+function canEquip(h,g){ ensureGear(g); return g.slot==='w'?g.cls===h.cls:g.slot==='a'?g.wt===wtOf(h.cls):true; }
+function equip(h,g){ if(!canEquip(h,g)) return false; for(const x of save.roster) if(x.gear&&x.gear[g.slot]===g.id) delete x.gear[g.slot]; h.gear[g.slot]=g.id; persist(); return true; }
+/* weapon + armor side effects on the battle unit */
+var _heroUnitG=heroUnit;
+heroUnit=function(h,hpNow){ const u=_heroUnitG(h,hpNow), gw=gearOf(h,'w'), ga=gearOf(h,'a'); const role=ROLE[h.cls];
+  if(gw&&canEquip(h,gw)){ const v=gearVal(gw);
+    if(role==='Tank'){ const r=u.hp/u.max; u.max=Math.round(u.max*(1+v*.4)); u.hp=Math.max(1,Math.round(u.max*r)); }
+    else if(role==='Fighter') u.atk=+(u.atk*(1+v*.4)).toFixed(1);
+    else if(role==='Assassin'||role==='Marksman') u.crit+=v*.4;
+    else { u.cdMax*=Math.max(.5,1-v*.4); } }
+  if(ga&&ga.wt==='robe') u.cdMax*=Math.max(.6,1-gearVal(ga)*.3);
+  return u; };
+/* equip pickers only show what the hero can actually use */
+function openGearPick(hid,slot){ const h=heroById(hid), m=$('modal'), all=save.gear.filter(g=>g.slot===slot), G=all.filter(g=>canEquip(h,g)).sort((a,b)=>gearVal(b)-gearVal(a)); m.hidden=false; m.className='ov';
+  const note=slot==='w'?'Only '+CLS[h.cls].n+' weapons fit.':slot==='a'?'Only '+WTN[wtOf(h.cls)]+' armor fits.':'';
+  m.innerHTML='<div class="panel"><h2>'+SLOTS[slot].n+' for '+esc(h.name.split(' ')[0])+'</h2>'+(note?'<p style="margin:0 0 6px;opacity:.8"><small>'+note+(all.length>G.length?' ('+(all.length-G.length)+' others in the armory)':'')+'</small></p>':'')+(G.length?'<div class="glist">'+G.map(g=>{ const o=gearOwner(g); return '<div class="gi" style="--rc:'+STARC[g.rar]+'" data-act="geq" data-id="'+hid+'|'+g.id+'"><div class="gic">'+gearIcon(g)+'</div><div class="gtx"><b style="color:'+STARC[g.rar]+'">'+gearName(g)+'</b><span>'+gearDesc(g)+(o?' · on '+esc(o.name.split(' ')[0]):'')+'</span></div></div>'; }).join('')+'</div>':'<p>No '+(slot==='w'?CLS[h.cls].n.toLowerCase()+' weapons':slot==='a'?WTN[wtOf(h.cls)].toLowerCase()+' armor':'charms')+' yet.</p>')+'<div class="btns">'+(gearOf(h,slot)?'<button class="ghost" data-act="guneq" data-id="'+hid+'|'+slot+'">Unequip</button>':'')+'<button class="ghost" data-act="hero" data-id="'+hid+'">Back</button></div></div>'; }
 /* ===== boot ===== */
 /* re-load the saved game here: game.js runs before prog.js defines maxLvl, so its first load attempt throws and leaves a blank save */
 try{ let s=null; try{ s=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(_){ s=null; } if(!s||!Array.isArray(s.roster)) s=JSON.parse(localStorage.getItem(KEY+'.bak')||'null'); if(s&&typeof s==='object'&&Array.isArray(s.roster)&&s.epoch===RESET_EPOCH) save=migrate(s); }catch(e){ window.__loadErr2=String(e); }
@@ -3222,4 +3260,5 @@ if(window.__dbg) window.__dbg.TUT=TUT;
 if(window.__dbg) window.__dbg.tutGo=tutGo;
 { const _ho=hintOnce; hintOnce=function(k,m){ if(TUT.L) return; return _ho(k,m); }; }
 if(window.__dbg){ window.__dbg.town=()=>({RATES:RATES,PITY:PITY,TD:TRAIN_DAY,tb:TB(),town:save.town}); }
+try{ Object.assign(window.__dbg,{mkGear,canEquip,gearDesc,gearName,heroUnit,equip,openGearPick}); }catch(e){}
 })();</script></body></html>
