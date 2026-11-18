@@ -544,6 +544,8 @@ html.rotd,html.rotd body{overflow:hidden}
 #tni{width:100%;box-sizing:border-box;padding:10px 12px;border-radius:12px;border:3px solid #7f69cf;background:#150e30;color:#fff;font:400 22px var(--display);text-align:center;outline:none}
 #tni:focus{border-color:var(--gold)}.tnh{font-size:12px!important;color:var(--mist)!important;margin-top:6px!important}
 #bscene .bsi{bottom:15%;height:62%}
+
+.bn-art img{height:84px;margin-right:-22px;image-rendering:auto}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -2227,7 +2229,7 @@ function heroesHtml(){ return ['Heroes',save.roster.length+'/'+ROSTER_MAX+' hero
 function memorialHtml(){ if(!save.mem.length) return ''; return '<div class="sec">Memorial <small>'+save.fallen.length+' fallen</small></div><div class="grid">'+save.mem.slice(-6).reverse().map(m=>'<div class="tile col mem"><div><div class="nm" style="color:'+STARC[m.star]+'">'+esc(m.n)+' '+starStr(m.star)+'</div><div class="d">'+CLS[m.cls].n+' · Lv '+m.lvl+' · fell on floor '+m.f+'<br>Last words: "'+esc(m.lw)+'"</div></div></div>').join('')+'</div>'; }
 function summonHtml(){
   const free=save.freeDay!==todayKey(), left=PITY-save.pity;
-  let h='<div class="banner"><div class="bn-art">'+['knight','wizard','archer','rogue','cleric'].map(c=>'<img src="data:image/png;base64,'+HSPR[c][0]+'">').join('')+'</div><div class="bn-tx"><b>Spirit Summon</b><span>Heroes answer your call from across the realms.</span><span class="pity">5★ guaranteed within <b>'+left+'</b> pulls</span></div></div>';
+  let h='<div class="banner"><div class="bn-art">'+['knight','wizard','archer','rogue','cleric'].map(c=>'<img src="'+((typeof HIMG0!=='undefined'&&HIMG0[c])||('data:image/png;base64,'+HSPR[c][0]))+'">').join('')+'</div><div class="bn-tx"><b>Spirit Summon</b><span>Heroes answer your call from across the realms.</span><span class="pity">5★ guaranteed within <b>'+left+'</b> pulls</span></div></div>';
   h+='<div class="sbtns">'+(free?'<button class="buy free big2" data-act="sum" data-id="free">Free daily summon</button>':'')+'<button class="buy big2" data-act="sum" data-id="1"'+(save.cry<PULL?' disabled':'')+'><span class="bl">Summon x1</span><span class="bs"><i class="cry"></i>'+PULL+'</span></button><button class="buy big2 gold" data-act="sum" data-id="10"'+(save.cry<PULL10?' disabled':'')+'><span class="bl">Summon x10</span><span class="bs"><i class="cry"></i>'+PULL10+(save.firstTen?' · 3★ promised':' · 3★+ inside')+'</span></button></div>';
   h+='<div class="sec">Odds</div><div class="odds">'+[5,4,3,2,1].map(s=>'<span style="color:'+STARC[s]+'">'+starStr(s)+' '+RATES[s]+'%</span>').join('')+'</div><div class="d synd">Every 10x summon includes at least one 3★ hero. A 5★ hero is guaranteed by your '+PITY+'th pull without one. Crystals come from first clears, boss floors and daily login.</div>';
   return ['Summon','Crystals: '+fmt(save.cry),h];
