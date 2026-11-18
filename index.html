@@ -551,6 +551,8 @@ html.rotd,html.rotd body{overflow:hidden}
 .banner{min-width:0;overflow:hidden}.bn-tx{min-width:0;flex:1 1 0}
 .bn-art{flex:0 1 auto;min-width:0}.bn-art img{height:clamp(46px,13vh,84px);margin-right:-18px}
 .sec,.pity{overflow-wrap:anywhere}
+#ph{flex-wrap:wrap;overflow:visible;white-space:normal;row-gap:2px}
+#ps:has(.tbar){flex:1 0 100%;order:3;overflow:visible}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -3177,6 +3179,7 @@ const TWP=[[50,45],[30,57],[50,57],[72,57],[17,57],[83,57],[50,40],[38,57],[62,5
 const TW={timer:0};
 function townPeople(){ clearInterval(TW.timer); const box=$('tpeople'); if(!box) return; let hs=(save.team||[]).map(heroById).filter(Boolean); if(!hs.length) hs=save.roster.slice(0,4); hs=hs.slice(0,5); box.innerHTML='';
   hs.forEach((h,i)=>{ const w=document.createElement('div'); w.className='twk'; const p=TWP[(i*2)%TWP.length]; w.style.left=p[0]+'%'; w.style.top=p[1]+'%'; w.innerHTML='<i></i><canvas width="30" height="30"></canvas>'; box.appendChild(w); try{ heroPortrait(w.querySelector('canvas'),h,30); }catch(e){} });
+  [400,1200,2800].forEach(d=>setTimeout(()=>{ box.querySelectorAll('.twk').forEach((w,i)=>{ try{ heroPortrait(w.querySelector('canvas'),hs[i],30); }catch(e){} }); },d));
   const step=()=>{ if(S.view!=='town'||S.mode!=='hub'){ return; } box.querySelectorAll('.twk').forEach(w=>{ if(Math.random()<.7){ const p=TWP[Math.floor(Math.random()*TWP.length)]; w.style.left=p[0]+'%'; w.style.top=p[1]+'%'; w.classList.add('mv'); setTimeout(()=>w.classList.remove('mv'),4200); } }); };
   TW.timer=setInterval(step,4300); }
 
