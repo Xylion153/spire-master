@@ -546,6 +546,11 @@ html.rotd,html.rotd body{overflow:hidden}
 #bscene .bsi{bottom:15%;height:62%}
 
 .bn-art img{height:84px;margin-right:-22px;image-rendering:auto}
+
+#tskip{top:auto!important;right:auto!important;bottom:6px;left:8px}
+.banner{min-width:0;overflow:hidden}.bn-tx{min-width:0;flex:1 1 0}
+.bn-art{flex:0 1 auto;min-width:0}.bn-art img{height:clamp(46px,13vh,84px);margin-right:-18px}
+.sec,.pity{overflow-wrap:anywhere}
 </style></head><body>
 <div id="vis"></div>
 <div id="app" data-mode="hub">
@@ -1685,7 +1690,8 @@ function innAmbience(c,t,tier){
 const cv=$('c'), ctx=cv.getContext('2d'), cv2=$('c2'), ctx2=cv2.getContext('2d'); let W=0,H=0,DPR=Math.min(2,window.devicePixelRatio||1),PIX=1/DPR;
 const APP=$('app'); let VIS=null;
 /* The host app can clip the bottom of the page (its header pushes the frame down). Measure what is actually on screen and fit the game to that. */
-function fitApp(){ if(ROT){ if(window.__rotApply) window.__rotApply(); return; } const ih=window.innerHeight; let t=0,h=ih; if(VIS&&VIS.h>=160&&VIS.h<ih-6){ t=VIS.t; h=VIS.h; } APP.style.top=t+'px'; APP.style.height=h+'px'; }
+function safeIns(){ let p=document.getElementById('safep'); if(!p){ p=document.createElement('div'); p.id='safep'; p.style.cssText='position:fixed;left:0;top:0;visibility:hidden;pointer-events:none;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)'; document.body.appendChild(p); } const c=getComputedStyle(p); return {l:parseFloat(c.paddingLeft)||0,r:parseFloat(c.paddingRight)||0}; }
+function fitApp(){ if(ROT){ if(window.__rotApply) window.__rotApply(); return; } const ih=window.innerHeight; let t=0,h=ih; const si=safeIns(); APP.style.left=si.l+'px'; APP.style.width=(window.innerWidth-si.l-si.r)+'px'; if(VIS&&VIS.h>=160&&VIS.h<ih-6){ t=VIS.t; h=VIS.h; } APP.style.top=t+'px'; APP.style.height=h+'px'; }
 function resize(){ fitApp(); W=APP.clientWidth||window.innerWidth; H=APP.clientHeight||window.innerHeight; { const hw=Math.round(Math.max(W*.36,Math.min(W*.5,H*.95))); APP.style.setProperty('--sw',Math.max(300,W-hw)+'px'); } cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); cv2.width=Math.round(W*DPR); cv2.height=Math.round(H*DPR); ctx.imageSmoothingEnabled=true; }
 function setPix(p){}
 window.addEventListener('resize',()=>{ resize(); if(typeof layout==='function') layout(); });
@@ -3368,7 +3374,7 @@ function tutTick(){ const L=TUT.L; if(!L) return; const s=TSTEPS[TUT.i]; if(!s){
   const bw=Math.min(300,Wd*.42); bub.style.width=bw+'px'; const cx=rc?rc.x+rc.w/2:Wd/2;
   if(s.top){ bub.style.cssText+=';width:'+bw+'px;left:'+(Wd/2-bw/2)+'px;top:8px;bottom:auto'; }
   else if(!rc){ bub.style.cssText+=';width:'+bw+'px;left:'+(Wd/2-bw/2)+'px;top:'+Math.max(10,Ht/2-70)+'px;bottom:auto'; }
-  else { const left=cx>Wd/2?14:Wd-bw-14; let top=Math.min(Ht-150,Math.max(10,rc.y+rc.h/2-60)); if(rc.y>Ht*.55) top=Math.max(10,Ht*.18); bub.style.cssText+=';width:'+bw+'px;left:'+left+'px;top:'+top+'px;bottom:auto'; }
+  else { let left=cx>Wd/2?14:Wd-bw-14; let top=Math.min(Ht-150,Math.max(10,rc.y+rc.h/2-60)); if(rc.y>Ht*.55) top=Math.max(10,Ht*.18); left=Math.max(14,Math.min(Wd-bw-14,left)); bub.style.cssText+=';width:'+bw+'px;left:'+left+'px;top:'+top+'px;bottom:auto'; }
 }
 document.addEventListener('click',function(e){ if(!TUT.L) return; const s=TSTEPS[TUT.i]; if(s&&s.click&&s.sel&&e.target.closest(s.sel)) setTimeout(()=>{ if(TSTEPS[TUT.i]===s) tutGo(TUT.i+1); },60); },true);
 function nameIntro(done){ const L=document.createElement('div'); L.id='tname'; L.innerHTML='<div class="tnp"><div class="tn1"><h2>The Spire Awakens</h2><p>For a thousand years, the Spire has stood above this valley. Heroes climb. Few return.</p><p>The old keeper is gone, and the camp at its foot is now <b>yours</b>. Gather heroes, rebuild the camp, and climb all <b>100 floors</b>.</p><button class="primary" id="tn1b">Continue</button></div><div class="tn2" hidden><h2>What is your name, Master?</h2><input id="tni" maxlength="14" placeholder="Enter your name" autocomplete="off" spellcheck="false"><p class="tnh">Your heroes will call you this.</p><button class="primary" id="tn2b" disabled>Begin</button></div></div>'; APP.appendChild(L);
