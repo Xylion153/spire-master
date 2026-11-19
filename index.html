@@ -3458,4 +3458,27 @@ if(window.__dbg) window.__dbg.tutGo=tutGo;
 { const _ho=hintOnce; hintOnce=function(k,m){ if(TUT.L) return; return _ho(k,m); }; }
 if(window.__dbg){ window.__dbg.town=()=>({RATES:RATES,PITY:PITY,TD:TRAIN_DAY,tb:TB(),town:save.town}); }
 try{ Object.assign(window.__dbg,{drawHero,mkGear,canEquip,gearDesc,gearName,heroUnit,equip,openGearPick}); }catch(e){}
+/* ===== phone features: haptics + local notifications (only active inside the Capacitor app) ===== */
+(function(){
+  const C=window.Capacitor; if(!C||!C.isNativePlatform||!C.isNativePlatform()) return;
+  const P=C.Plugins||{}, H=P.Haptics, LN=P.LocalNotifications;
+  /* ---- haptics, tied to the game's sound effects ---- */
+  const lastH={}; const MAP={ tap:['sel',60], buy:['imp:MEDIUM',80], coin:['imp:LIGHT',120], win:['ok',300], die:['err',300], no:['warn',150], rare:['imp:HEAVY',200], crit:['imp:MEDIUM',120], slam:['imp:MEDIUM',120], meteor:['imp:HEAVY',150], hit:['imp:LIGHT',110], arrive:['imp:LIGHT',200] };
+  function buzz(code){ if(!H) return; try{ if(code==='sel') H.selectionStart&&H.selectionStart().then(()=>H.selectionEnd&&H.selectionEnd()); else if(code==='ok') H.notification({type:'SUCCESS'}); else if(code==='err') H.notification({type:'ERROR'}); else if(code==='warn') H.notification({type:'WARNING'}); else H.impact({style:code.split(':')[1]}); }catch(e){} }
+  const _sfxH=sfx; sfx=function(k,a){ const r=_sfxH(k,a); try{ if(!save.mute){ const m=MAP[k]; if(m){ const n=Date.now(); if(!lastH[k]||n-lastH[k]>m[1]){ lastH[k]=n; buzz(m[0]); } } } }catch(e){} return r; };
+  /* ---- notifications ---- */
+  async function granted(){ if(!LN) return false; try{ return (await LN.checkPermissions()).display==='granted'; }catch(e){ return false; } }
+  async function ask(){ if(!LN) return; try{ const s=await LN.checkPermissions(); if(s.display==='prompt'||s.display==='prompt-with-rationale') await LN.requestPermissions(); }catch(e){} }
+  async function clearAll(){ if(!LN) return; try{ const p=await LN.getPending(); if(p.notifications&&p.notifications.length) await LN.cancel({notifications:p.notifications}); }catch(e){} }
+  async function schedule(){ if(!(await granted())||typeof save==='undefined'||!save) return; await clearAll(); const L=[], now=Date.now();
+    try{ NBORDER.forEach((k,i)=>{ const d=nbd(k); if(d.up&&d.up.end>now+3000) L.push({id:2001+i,title:NB[k].n+(d.L?' upgraded!':' is built!'),body:'Your builders are done. Come take a look.',schedule:{at:new Date(d.up.end),allowWhileIdle:true}}); });
+      const m=nbd('mine'); if(m.L>0&&!m.up){ const t=m.last+360*60000; if(t>now+3000) L.push({id:2010,title:'Your Gold Mine is full',body:'The miners have a full load waiting. Come collect it!',schedule:{at:new Date(t),allowWhileIdle:true}}); } }catch(e){}
+    try{ const d=new Date(); for(let i=0;i<2;i++){ const at=new Date(d.getFullYear(),d.getMonth(),d.getDate()+(save.loginDay===todayKey()?1:0)+i,10,0,0); if(at.getTime()>now+60000) L.push({id:2020+i,title:'Your daily reward is waiting',body:'Free crystals and gold are ready in Spire Master.',schedule:{at:at,allowWhileIdle:true}}); } }catch(e){}
+    if(L.length){ try{ await LN.schedule({notifications:L}); }catch(e){} } }
+  document.addEventListener('visibilitychange',()=>{ if(document.hidden) schedule(); else clearAll(); });
+  window.addEventListener('pagehide',()=>{ schedule(); });
+  /* ask politely: when the first building starts, or after the player first reaches the town with some progress */
+  const _nbStart=nbStart; nbStart=function(k){ const r=_nbStart(k); if(r&&!save.askedN){ save.askedN=1; persist(); ask(); } return r; };
+  const _openTown=openTown; openTown=function(){ const r=_openTown(); try{ if(save.best>=3&&!save.askedN){ save.askedN=1; persist(); setTimeout(ask,900); } }catch(e){} return r; };
+})();
 })();</script></body></html>
